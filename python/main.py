@@ -1,0 +1,1 @@
+print("Universal Search Query Language")
