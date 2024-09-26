@@ -33,16 +33,16 @@ T -> Generic Symbol (For below chart purposes only)
 | is / equals       | =         | Exact match                                                                                                      |
 | contains          | =:        | Left contains right                                                                                              |
 | isin              | :=        | Right contains left                                                                                              |
-| or                | \|        | Or boolean operation                                                                                             |
-| and               | &         | And boolean operation                                                                                            |
-| *Parenthesis*     | ()        | Prioritizes statements inside parenthesis                                                                        |
-| *Statement close* | ;         | Closes statement                                                                                                 |
-| *NA*              | "*token*" | Combines multiple words into single string. Necessary for multi-worded tokens, optional for single worded tokens |
-| *NA*              | ~T        | Makes statement case insensitive                                                                                 |
 | lessthan          | <         | "Less than" comparison of numbers or of charactors/strings based on ASCI value of characters                     |
 | morethan          | \>        | "greater than" comparison of numbers or of charactors/strings based on ASCI value of characters                  |
 | lessthanequals    | <=        | "Less than or equals" comparison of numbers or of charactors/strings based on ASCI value of characters           |
 | morethan          | \>=       | "greater than or equals" comparison of numbers or of charactors/strings based on ASCI value of characters        |
+| or                | \|        | Or boolean operation                                                                                             |
+| and               | &         | And boolean operation                                                                                            |
+| *Parenthesis*     | ()        | Prioritizes statements inside parenthesis                                                                        |
+| *NA*              | "*token*" | Combines multiple words into single string. Necessary for multi-worded tokens, optional for single worded tokens |
+| *NA*              | ^T        | Makes statement case sensitive queries are case insensitive by default                                           |
+
 
 ## Real World Examples of Where This Would Be Implemented
 - Spotify Playlist/Liked Songs Search Box

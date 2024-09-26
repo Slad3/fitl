@@ -10,6 +10,10 @@ class ComparisonOperator(Enum):
     EQUALS = "="
     CONTAINS = "=:"
     ISIN = ":="
+    LESS_THAN = "<"
+    MORE_THAN = ">"
+    LESS_THAN_EQUALS = "<="
+    MORE_THAN_EQUALS = ">="
 
 
 class BooleanComparisonOperator(Enum):
@@ -17,11 +21,16 @@ class BooleanComparisonOperator(Enum):
     AND = "&"
 
 
+NEGATE_VALUE = "!"
+
+
 @dataclass
 class Operation:
     column: str
     operation: ComparisonOperator
     value: str
+    negated: bool = False
+    case_sensitive: bool = False
 
 
 COMPARISON_OPERATORS_NAMES = [operation.name for operation in ComparisonOperator]
@@ -45,9 +54,18 @@ def tokenize(input_string: str) -> list[str] | str:
             result_list.append("(")
             value = value[1:]
 
+        if split_string[index][0] == "!(" and not in_quotes:
+            result_list.append("!(")
+            value = value[1:]
+
         if value[0] == '"':
             start_index = index
             in_quotes = True
+
+        if not in_quotes and value[-1] == ")":
+            result_list.append(value[:-1])
+            result_list.append(")")
+            continue
 
         result_list.append(value) if not in_quotes else None
 
@@ -73,10 +91,16 @@ def parse(tokens: list[str]) -> list[Operation | BooleanComparisonOperator] | st
     enumerated_tokens = enumerate(tokens)
 
     for index, _ in enumerated_tokens:
-        if tokens[index] == "(":
+        if tokens[index] == "(" or tokens[index] == "!(":
+            print(tokens[index:])
             right_parenth = tokens[index:].index(")")
-            ops = parse(tokens[index + 1: index + right_parenth])
-            operation_stack = ops + [operation_stack[-1]] + operation_stack[:-1]
+            if tokens[index] == "(":
+                ops = parse(tokens[index + 1: index + right_parenth])
+                operation_stack = ops + [operation_stack[-1]] + operation_stack[:-1]
+
+            elif tokens[index] == "!(":
+                ops = parse(tokens[index + 2: index + right_parenth])
+                operation_stack = ops + [NEGATE_VALUE] + [operation_stack[-1]] + operation_stack[:-1]
 
             [next(enumerated_tokens, None) for _ in range(right_parenth)]
 
@@ -90,19 +114,33 @@ def parse(tokens: list[str]) -> list[Operation | BooleanComparisonOperator] | st
             column: str
             operation: ComparisonOperator
             value: str
+            negated: bool = False
+            case_sensitive: bool = False
 
             column = tokens[index]
-            if tokens[index + 1] in COMPARISON_OPERATORS:
-                operation = ComparisonOperator(tokens[index + 1])
-            elif tokens[index + 1].upper() in COMPARISON_OPERATORS_NAMES:
-                operation = ComparisonOperator[tokens[index + 1].upper()]
+            operator_string = tokens[index + 1]
+
+            if operator_string[0] == "!":
+                negated = True
+                operator_string = operator_string[1:]
+
+            if operator_string[0] == "^":
+                case_sensitive = True
+                operator_string = operator_string[1:]
+
+            if operator_string in COMPARISON_OPERATORS:
+                operation = ComparisonOperator(operator_string)
+            elif operator_string.upper() in COMPARISON_OPERATORS_NAMES:
+                operation = ComparisonOperator[operator_string.upper()]
             else:
-                return f"Operation {tokens[index + 1]} not supported"
+                return f"Operation {operator_string} not supported"
 
             operation_stack.append(Operation(
                 column=column,
                 operation=operation,
-                value=tokens[index + 2]
+                value=tokens[index + 2],
+                negated=negated,
+                case_sensitive=case_sensitive,
             ))
 
             [next(enumerated_tokens, None) for _ in range(2)]
@@ -111,15 +149,34 @@ def parse(tokens: list[str]) -> list[Operation | BooleanComparisonOperator] | st
 
 
 def operate(operation: Operation, row: dict):
+    result: bool
+
+    operation_value = operation.value
+    row_value = row[operation.column]
+
+    if not operation.case_sensitive:
+        operation_value = operation_value.lower()
+        row_value = row_value.lower()
+
     match operation.operation:
         case ComparisonOperator.EQUALS:
-            return operation.value == row[operation.column]
+            result = operation_value == row_value
         case ComparisonOperator.CONTAINS:
-            return operation.value in row[operation.column]
+            result = operation_value in row_value
         case ComparisonOperator.ISIN:
-            return row[operation.column] == operation.value
+            result = row_value == operation_value
+        case ComparisonOperator.LESS_THAN:
+            result = row_value < operation_value
+        case ComparisonOperator.LESS_THAN_EQUALS:
+            result = row_value <= operation_value
+        case ComparisonOperator.MORE_THAN:
+            result = row_value > operation_value
+        case ComparisonOperator.MORE_THAN_EQUALS:
+            result = row_value >= operation_value
         case _:
             raise f"Operation {operation.operation} not supported"
+
+    return result if not operation.negated else not result
 
 
 def boolean_operate(a: bool, b: bool, boolean_operation: BooleanComparisonOperator):
@@ -145,6 +202,8 @@ def filter_row(operation_stack: list[Operation | BooleanComparisonOperator], row
                 current_bool_value = operation_result
             else:
                 current_bool_value = boolean_operate(current_bool_value, operation_result, boolean_comparison_operator)
+        if operation == "!":
+            current_bool_value = not current_bool_value
 
     return current_bool_value
 
@@ -205,33 +264,37 @@ def test_tokenize_with_parentheses():
                       'Strictly 4', ')']
 
 
-@responses.activate
 def test_compile_simple_success():
-    input_query = f"artist := Pac"
+    input_query = f"artist =: Pac"
 
     operation_stack = parse(tokenize(input_query))
-    assert operation_stack == [Operation(column='artist', operation=ComparisonOperator.ISIN, value='Pac')]
+    assert operation_stack == [Operation(column='artist', operation=ComparisonOperator.CONTAINS, value='Pac')]
 
 
-@responses.activate
+def test_compile_negated_case_sensitive_operation():
+    input_query = f"artist !^= Pac"
+
+    operation_stack = parse(tokenize(input_query))
+    assert operation_stack == [
+        Operation(column='artist', operation=ComparisonOperator.EQUALS, value='Pac', negated=True, case_sensitive=True)]
+
+
 def test_compile_simple_success_worded():
-    input_query = f"artist isin Pac"
+    input_query = f"artist contains Pac"
 
     operation_stack = parse(tokenize(input_query))
-    assert operation_stack == [Operation(column='artist', operation=ComparisonOperator.ISIN, value='Pac')]
+    assert operation_stack == [Operation(column='artist', operation=ComparisonOperator.CONTAINS, value='Pac')]
 
 
 def test_compile_parentheses_success():
-    input_query = r'artist := Pac & (album =: "Against The World" | album =: "Strictly 4")'
+    input_query = r'artist =: Pac & (album =: "Against The World" | album =: "Strictly 4")'
 
-    operation_stack = parse(tokenize(input_query))
-
-    assert operation_stack == [
+    assert parse(tokenize(input_query)) == [
         Operation(column='album', operation=ComparisonOperator.CONTAINS, value='Against The World'),
         BooleanComparisonOperator.OR,
         Operation(column='album', operation=ComparisonOperator.CONTAINS, value='Strictly 4'),
         BooleanComparisonOperator.AND,
-        Operation(column='artist', operation=ComparisonOperator.ISIN, value='Pac')]
+        Operation(column='artist', operation=ComparisonOperator.CONTAINS, value='Pac')]
 
 
 def test_filter_row(test_row):
@@ -242,7 +305,36 @@ def test_filter_row(test_row):
     assert result is True
 
 
+def test_filter_case_sensitive_success(test_row):
+    input_query = r'artist ^=: Pac & album =: "Against the World"'
+    operation_stack = parse(tokenize(input_query))
+
+    result = filter_row(operation_stack, test_row)
+
+    assert result is True
+
+
+# def test_filter_negate_parentheses(test_row):
+#     print()
+#     input_query = r'(artist =: Pac) & album =: "Against the World"'
+#     operation_stack = parse(tokenize(input_query))
+#     pprint(operation_stack)
+#
+#     result = filter_row(operation_stack, test_row)
+#
+#     assert result is True
+
+
+def test_filter_case_sensitive_fail(test_row):
+    input_query = r'artist ^= pac & album =: "Against the World"'
+    operation_stack = parse(tokenize(input_query))
+
+    result = filter_row(operation_stack, test_row)
+    assert result is False
+
+
 def test_filter_table_simple_query(test_table):
+    print()
     input_query = r'artist = Makaveli | album =: "Against the World"'
     operation_stack = parse(tokenize(input_query))
 
