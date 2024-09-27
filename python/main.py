@@ -54,9 +54,9 @@ def tokenize(input_string: str) -> list[str] | str:
             result_list.append("(")
             value = value[1:]
 
-        if split_string[index][0] == "!(" and not in_quotes:
+        if split_string[index][0:2] == "!(" and not in_quotes:
             result_list.append("!(")
-            value = value[1:]
+            value = value[2:]
 
         if value[0] == '"':
             start_index = index
@@ -92,15 +92,16 @@ def parse(tokens: list[str]) -> list[Operation | BooleanComparisonOperator] | st
 
     for index, _ in enumerated_tokens:
         if tokens[index] == "(" or tokens[index] == "!(":
-            print(tokens[index:])
             right_parenth = tokens[index:].index(")")
             if tokens[index] == "(":
                 ops = parse(tokens[index + 1: index + right_parenth])
-                operation_stack = ops + [operation_stack[-1]] + operation_stack[:-1]
+                operation_stack = ops + [operation_stack[-1]] + operation_stack[:-1] if len(
+                    operation_stack) > 0 else ops
 
             elif tokens[index] == "!(":
-                ops = parse(tokens[index + 2: index + right_parenth])
-                operation_stack = ops + [NEGATE_VALUE] + [operation_stack[-1]] + operation_stack[:-1]
+                ops = parse(tokens[index + 1: index + right_parenth])
+                operation_stack = ops + [NEGATE_VALUE] + [operation_stack[-1]] + operation_stack[:-1] if len(
+                    operation_stack) > 0 else ops + [NEGATE_VALUE]
 
             [next(enumerated_tokens, None) for _ in range(right_parenth)]
 
@@ -314,15 +315,15 @@ def test_filter_case_sensitive_success(test_row):
     assert result is True
 
 
-# def test_filter_negate_parentheses(test_row):
-#     print()
-#     input_query = r'(artist =: Pac) & album =: "Against the World"'
-#     operation_stack = parse(tokenize(input_query))
-#     pprint(operation_stack)
-#
-#     result = filter_row(operation_stack, test_row)
-#
-#     assert result is True
+def test_filter_negate_parentheses(test_row):
+    print()
+    input_query = r'!(artist =: Pac) & album =: "Against the World"'
+    operation_stack = parse(tokenize(input_query))
+    pprint(operation_stack)
+
+    result = filter_row(operation_stack, test_row)
+
+    assert result is False
 
 
 def test_filter_case_sensitive_fail(test_row):
@@ -335,7 +336,7 @@ def test_filter_case_sensitive_fail(test_row):
 
 def test_filter_table_simple_query(test_table):
     print()
-    input_query = r'artist = Makaveli | album =: "Against the World"'
+    input_query = r'(artist = Makaveli | album =: "Against the World")'
     operation_stack = parse(tokenize(input_query))
 
     result = filter_table(operation_stack, test_table)
