@@ -21,9 +21,6 @@ class BooleanComparisonOperator(Enum):
     AND = "&"
 
 
-NEGATE_VALUE = "!"
-
-
 @dataclass
 class Operation:
     column: str
@@ -32,6 +29,8 @@ class Operation:
     negated: bool = False
     case_sensitive: bool = False
 
+
+NEGATE_VALUE = "!"
 
 COMPARISON_OPERATORS_NAMES = [operation.name for operation in ComparisonOperator]
 COMPARISON_OPERATORS = [operation.value for operation in ComparisonOperator]
@@ -262,6 +261,14 @@ def test_tokenize_with_parentheses():
     input_query = r'artist := Pac & (album =: "Against The World" | album =: "Strictly 4")'
     tokens = tokenize(input_query)
     assert tokens == ['artist', ':=', 'Pac', '&', '(', 'album', '=:', 'Against The World', '|', 'album', '=:',
+                      'Strictly 4', ')']
+
+
+def test_tokenise_with_negated_parentheses():
+    input_query = r'artist := Pac & !(album =: "Against The World" | album =: "Strictly 4")'
+    tokens = tokenize(input_query)
+    pprint(tokens)
+    assert tokens == ['artist', ':=', 'Pac', '&', '!', '(', 'album', '=:', 'Against The World', '|', 'album', '=:',
                       'Strictly 4', ')']
 
 
