@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from pprint import pprint
-import re
 
 
 class ComparisonOperator(Enum):
@@ -18,6 +16,9 @@ class BooleanComparisonOperator(Enum):
     OR = "|"
     AND = "&"
 
+    def __str__(self):
+        return str(self.value)
+
 
 @dataclass
 class Operation:
@@ -28,7 +29,7 @@ class Operation:
     case_sensitive: bool = False
 
     def __str__(self) -> str:
-        return f"{self.column}{self.operation}|{self.value}"
+        return f"{self.column} | {self.operation} | {self.value}"
 
 
 NEGATE_VALUE = "!"
@@ -60,7 +61,7 @@ def if_comparison_operator(input_str: str):
         return None
 
 
-def tokenize(input_string: str) -> list[str]:
+def tokenize(input_string: str) -> list[str] | str:
     split_string = input_string.split()
 
     result_list = []
@@ -69,11 +70,11 @@ def tokenize(input_string: str) -> list[str]:
 
     for index, value in enumerate(split_string):
 
-        if value.startswith('"'):  # Start of a quoted string
+        if value.startswith('"'):
             start_index = index
             in_quotes = True
 
-        if not in_quotes:  # Regular token processing
+        if not in_quotes:
             while value and value[0] in [NEGATE_VALUE, CASE_SENS_VALUE, "("]:
                 if value[0] == "(":
                     result_list.append("(")
@@ -92,14 +93,14 @@ def tokenize(input_string: str) -> list[str]:
 
         value = temp_reversed[::-1]
 
-        if in_quotes and value.endswith('"'):  # End of a quoted string
+        if in_quotes and value.endswith('"'):
             temp_token = " ".join(split_string[start_index:index] + [value])[1:-1]  # Join and remove quotes
             result_list.append(temp_token)
             in_quotes = False
-        elif not in_quotes:  # Add the non-quoted token
+        elif not in_quotes:
             result_list.append(value)
 
-        if len(reversed_stack) > 0 and not in_quotes:  # Handle closing parentheses
+        if len(reversed_stack) > 0 and not in_quotes:
             result_list.extend(reversed_stack[::-1])
 
     return result_list
