@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from pprint import pprint
+import re
 
 
 class ComparisonOperator(Enum):
@@ -31,6 +32,7 @@ class Operation:
 
 
 NEGATE_VALUE = "!"
+CASE_SENS_VALUE = "^"
 
 COMPARISON_OPERATORS_NAMES = [operation.name for operation in ComparisonOperator]
 COMPARISON_OPERATORS = [operation.value for operation in ComparisonOperator]
@@ -58,76 +60,86 @@ def if_comparison_operator(input_str: str):
         return None
 
 
-def tokenize(input_string: str) -> list[str] | str:
+def tokenize(input_string: str) -> list[str]:
     split_string = input_string.split()
 
     result_list = []
     start_index = -1
     in_quotes = False
 
-    enumerated_split_string = enumerate(split_string)
-    for index, _ in enumerated_split_string:
-        value = split_string[index]
+    for index, value in enumerate(split_string):
 
-        if index > 15:
-            print(index, value)
-
-        if split_string[index][0] == "(" and not in_quotes:
-            result_list.append("(")
-            value = value[1:]
-
-        if split_string[index][0:2] == "!(" and not in_quotes:
-            result_list.append("!")
-            result_list.append("(")
-            value = value[2:]
-
-        if value[0] == '"':
+        if value.startswith('"'):  # Start of a quoted string
             start_index = index
             in_quotes = True
 
-        if not in_quotes and value[-1] == ")":
-            result_list.append(value[:-1])
-            result_list.append(")")
-            continue
+        if not in_quotes:  # Regular token processing
+            while value and value[0] in [NEGATE_VALUE, CASE_SENS_VALUE, "("]:
+                if value[0] == "(":
+                    result_list.append("(")
+                elif value[0] == CASE_SENS_VALUE:
+                    result_list.append(CASE_SENS_VALUE)
+                elif value[0] == NEGATE_VALUE:
+                    result_list.append(NEGATE_VALUE)
 
-        result_list.append(value) if not in_quotes else None
+                value = value[1:]
 
-        if in_quotes and value[-1] == '"':
-            temp_token = " ".join(split_string[start_index:index + 1])[1:-1]
+        reversed_stack = []
+        temp_reversed = value[::-1]
+        while temp_reversed[0] == ")":
+            reversed_stack.append(")")
+            temp_reversed = temp_reversed[1:]
+
+        value = temp_reversed[::-1]
+
+        if in_quotes and value.endswith('"'):  # End of a quoted string
+            temp_token = " ".join(split_string[start_index:index] + [value])[1:-1]  # Join and remove quotes
             result_list.append(temp_token)
             in_quotes = False
-        elif value[-2:] == '")':
-            temp_token = " ".join(split_string[start_index:index + 1])[1:-2]
-            result_list.append(temp_token)
-            result_list.append(")")
-            in_quotes = False
+        elif not in_quotes:  # Add the non-quoted token
+            result_list.append(value)
+
+        if len(reversed_stack) > 0 and not in_quotes:  # Handle closing parentheses
+            result_list.extend(reversed_stack[::-1])
 
     return result_list
 
 
 def test_tokenize():
+    print()
     input_query = r'artist := Pac & album =: "Against The World"'
     tokens = tokenize(input_query)
     assert tokens == ['artist', ':=', 'Pac', '&', 'album', '=:', 'Against The World']
 
 
 def test_tokenize_with_parentheses():
+    print()
     input_query = r'artist := Pac & (album =: "Against The World" | album =: "Strictly 4")'
     tokens = tokenize(input_query)
     assert tokens == ['artist', ':=', 'Pac', '&', '(', 'album', '=:', 'Against The World', '|', 'album', '=:',
                       'Strictly 4', ')']
 
 
-def test_tokenise_with_negated_parentheses():
+def test_tokenize_with_negated_parentheses():
+    print()
     input_query = r'artist := Pac & !(album =: "Against The World" | album =: "Strictly 4")'
     tokens = tokenize(input_query)
     assert tokens == ['artist', ':=', 'Pac', '&', '!', '(', 'album', '=:', 'Against The World', '|', 'album', '=:',
                       'Strictly 4', ')']
 
-def test_tokenise_with_negated_nested_parentheses():
+
+def test_tokenize_with_negated_nested_parentheses():
     print()
-    input_query = r'artist =: Pac & (album =: "Against The World" | (album =: "Strictly 4" & title = "I get Around"))'
+    input_query = r'artist =: Pac & !(album =: "Against The World" | (album =: "Strictly 4" & title = "I get Around"))'
     tokens = tokenize(input_query)
-    print(tokens)
-    assert tokens == ['artist', ':=', 'Pac', '&', '!', '(', 'album', '=:', 'Against The World', '|', '(', 'album', '=:',
+    assert tokens == ['artist', '=:', 'Pac', '&', '!', '(', 'album', '=:', 'Against The World', '|', '(', 'album', '=:',
                       'Strictly 4', '&', 'title', '=', 'I get Around', ')', ')']
+
+
+def test_tokenize_multiple_negates():
+    print()
+    input_query = r'!!!!!!((artist = Pac) & (title !^= "Big Poppa"))'
+    tokens = tokenize(input_query)
+    assert tokens == ['!', '!', '!', '!', '!', '!', '(', '(', 'artist', '=', 'Pac', ')', '&', '(', 'title', '!', '^',
+                      '=',
+                      'Big Poppa', ')', ')']
