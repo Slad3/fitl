@@ -3,14 +3,10 @@ from pprint import pprint
 from data_structures import BooleanComparisonOperator, if_boolean_comparison_operator, \
     if_comparison_operator, NEGATE_VALUE, ComparisonOperator, tokenize, \
     Operation_Stack
-from python.data_structures import CASE_SENS_VALUE, Operation
+from Python.data_structures import CASE_SENS_VALUE, Operation
 
 
 def parse(tokens: list[str]) -> list[Operation_Stack] | str:
-    """
-        TODO:
-        - Support more than one level of parentheses
-    """
 
     def parse_S(temp_tokens: list[str], temp_stack=None) -> (
             list[Operation | BooleanComparisonOperator], list[str]):

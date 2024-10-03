@@ -1,60 +1,99 @@
----
-tags:
----
+# Single Table Filter Query Language
 
-# Main Point
+## Main Point
 
-- To create a universal advanced search query language for general public to do advanced searches of data from a single
-  table in a single string/single search box apart from simple searches
+- A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to
+  implement, easy to write,
+  easy to detail out.
 
 ## How does it differ from just injecting SQL?
 
-- Super easy for people to learn, though enough to master
-- Single table querying only
-- Easy to use within a text box
+- Super easy for non-programmer people to learn, though deep enough to master and create complex and detailed queries
+- Filters single tables only (no joining tables or referencing other tables)
+- Easy to quickly write within a text box, even on mobile (looking at you regex)
 
-## Example (Prototype) Queries
+## Real World Examples of Where This Would Be Implemented
 
-Examples are geared toward filtering songs in a (Spotify) playlist
+- Spotify Playlist/Liked Songs Search Box
+    - Query example: ```artist = Outkast & album != Idlewild```
+- Product search pages
+    - Query example ```brand != Apple & (ram = 32GB | resolution = "2560x1440")```
 
-### Worded Prototype
+## Writing queries
+
+### For programmers: writing queries is similar to writing boolean conditionals
+
+### For people who touch grass:
+
+The simplest query is based on the base operation schema:
 
 ```
-(artist contains 2Pac or artist is "Makaveli" or artist ~is Makaveli) and (album contains theory or title isin "Ain't Hard 2 Find");
+<column name> <comparison operation> <compared to value>  
 ```
 
-### Symbolic Prototype
+For example
 
 ```
-artist := Pac | artist = Makaveli | artist ~:= 2pac & (album =: theory or title := "Ain't Hard 2 Find")
+artist = Prince
+```
+
+From a data table (for example a song playlist), will only return the rows where the `artist`(<column>) is equal to
+`Prince`
+
+This can be expanded upon with a boolean operator to combine operations
+
+```
+artist = Prince & title = "When Doves Cry"
+```
+
+You can inverse this filter by an exclamation point (parentheses are recommended, but not required)
+
+```
+!(artist = Prince & title = "When Doves Cry")
+```
+
+Like in PEMDAS, Operations are executed from left to right. Parentheses, like in math, will prioritize operations in a
+specified order.
+
+```
+album = 1999 | (artist = Prince & title = "When Doves Cry")
+```
+
+Also on the topic of word odering: no, Yodaing is not allowed
+
+```
+Prince = artist // Will not work
+```
+
+A somewhat extreme example:
+
+```
+artist ^= 2Pac | artist =: pac | artist = Makaveli & (album =: theory or title =: "Ain't Hard 2 Find")
 ```
 
 ## Symbols Dictionary
 
 T -> Generic Symbol (For below chart purposes only)
 
+\<value> -> inputted value
+
 | Word           | Symbol    | Description                                                                                                      |
 |----------------|-----------|------------------------------------------------------------------------------------------------------------------|
 | not            | !T        | Negates Operation                                                                                                |
 | is / equals    | =         | Exact match                                                                                                      |
-| contains       | =:        | Left contains right                                                                                              |
-| isin           | :=        | Right contains left                                                                                              |
-| lessthan       | <         | "Less than" comparison of numbers or of charactors/strings based on ASCI value of characters                     |
-| morethan       | \>        | "greater than" comparison of numbers or of charactors/strings based on ASCI value of characters                  |
-| lessthanequals | <=        | "Less than or equals" comparison of numbers or of charactors/strings based on ASCI value of characters           |
-| morethan       | \>=       | "greater than or equals" comparison of numbers or of charactors/strings based on ASCI value of characters        |
+| contains       | =:        | Left contains right (Nickolas Picklous =: Nick)                                                                  |
+| isin           | :=        | Right contains left (Nick := Nickolas Picklous)                                                                  |
+| lessthan       | <         | "Less than" comparison of numbers or of characters/strings based on ASCI value of characters                     |
+| morethan       | \>        | "greater than" comparison of numbers or of characters/strings based on ASCI value of characters                  |
+| lessthanequals | <=        | "Less than or equals" comparison of numbers or of characters/strings based on ASCI value of characters           |
+| morethan       | \>=       | "greater than or equals" comparison of numbers or of characters/strings based on ASCI value of characters        |
 | or             | \|        | Or boolean operation                                                                                             |
 | and            | &         | And boolean operation                                                                                            |
 | *Parenthesis*  | ()        | Prioritizes statements inside parenthesis                                                                        |
-| *NA*           | "*token*" | Combines multiple words into single string. Necessary for multi-worded tokens, optional for single worded tokens |
+| *NA*           | "<value>" | Combines multiple words into single string. Necessary for multi-worded tokens, optional for single worded tokens |
 | *NA*           | ^T        | Makes statement case sensitive queries are case insensitive by default                                           |
 
-## Real World Examples of Where This Would Be Implemented
-
-- Spotify Playlist/Liked Songs Search Box
-- Product search pages
-
-## Schema of 
+## NFA Schema
 
 ```
 S [boolean] -> Op | Par | Neg | S BoolOp S
@@ -81,9 +120,8 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 
 - Add "re" Comparison symbol for regex matching
 - add "~" symbol for a soft match excluding any non-alphanumeric characters in matching
-- Convert Python prototype to Rust
-    - Add build scripts for
-        - Standard Rust library
-        - WASM js library
-        - Compiled python library
-    - 
+- Add build scripts for
+    - Standard Rust library
+    - WASM js library
+    - Compiled python library
+- Build and deploy simple frontend for easy public testing 
