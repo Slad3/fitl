@@ -83,10 +83,10 @@ T -> Generic Symbol (For below chart purposes only)
 | is / equals    | =         | Exact match                                                                                                      |
 | contains       | =:        | Left contains right (Nickolas Picklous =: Nick)                                                                  |
 | isin           | :=        | Right contains left (Nick := Nickolas Picklous)                                                                  |
-| lessthan       | <         | "Less than" comparison of numbers or of characters/strings based on ASCI value of characters                     |
-| morethan       | \>        | "greater than" comparison of numbers or of characters/strings based on ASCI value of characters                  |
-| lessthanequals | <=        | "Less than or equals" comparison of numbers or of characters/strings based on ASCI value of characters           |
-| morethan       | \>=       | "greater than or equals" comparison of numbers or of characters/strings based on ASCI value of characters        |
+| lessthan       | <         | "Less than" comparison of numbers or of characters/strings based on ASCII value of characters                    |
+| morethan       | \>        | "greater than" comparison of numbers or of characters/strings based on ASCII value of characters                 |
+| lessthanequals | <=        | "Less than or equals" comparison of numbers or of characters/strings based on ASCII value of characters          |
+| morethan       | \>=       | "greater than or equals" comparison of numbers or of characters/strings based on ASCII value of characters       |
 | or             | \|        | Or boolean operation                                                                                             |
 | and            | &         | And boolean operation                                                                                            |
 | *Parenthesis*  | ()        | Prioritizes statements inside parenthesis                                                                        |
