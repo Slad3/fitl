@@ -118,7 +118,9 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 ### TODO
 
 - Add "re" Comparison symbol for regex matching
-- add "~" symbol for a soft match excluding any non-alphanumeric characters in matching
+- Add "~" symbol for a soft match excluding any non-alphanumeric characters in matching
+- Add custom type structures for table columns
+- Add more ways to create a table
 - Add build scripts for
     - Standard Rust library
     - WASM js library
