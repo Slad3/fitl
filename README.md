@@ -1,12 +1,11 @@
-# Single Table Filter Query Language
+# Filter Table Language (FiTL, like Fiddle)
 
 ## Main Point
 
-- A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to
-  implement, easy to write,
-  easy to detail out.
+A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to
+implement, easy to write, but also easy to detail.
 
-## How does it differ from just injecting SQL?
+## How does it differ from SQL?
 
 - Super easy for non-programmer people to learn, though deep enough to master and create complex and detailed queries
 - Filters single tables only (no joining tables or referencing other tables)

@@ -1,5 +1,3 @@
-use crate::compile::Instruction;
-
 #[derive(Debug, PartialEq)]
 pub enum ComparisonOperator {
     Equals,
@@ -29,7 +27,6 @@ pub struct Operation {
 pub const NEGATE_VALUE: char = '!';
 pub const CASE_SENS_VALUE: char = '^';
 
-
 impl ComparisonOperator {
     pub fn as_str(&self) -> &str {
         match self {
@@ -52,9 +49,7 @@ impl ComparisonOperator {
             "<=" | "LESSTHANEQUALS" => Option::from(ComparisonOperator::LessThanEquals),
             ">" | "MORESTHAN" => Option::from(ComparisonOperator::MoreThan),
             ">=" | "MORESTHANEQUALS" => Option::from(ComparisonOperator::MoreThanEquals),
-            _ => {
-                None
-            }
+            _ => None,
         }
     }
 }
@@ -63,23 +58,58 @@ impl BooleanComparisonOperator {
     pub fn as_str(&self) -> &str {
         match self {
             BooleanComparisonOperator::Or => "|",
-            BooleanComparisonOperator::And => "&"
+            BooleanComparisonOperator::And => "&",
         }
     }
-
 
     pub fn from_str(input_str: &str) -> Option<BooleanComparisonOperator> {
         match input_str.to_uppercase().as_str() {
             "|" | "OR" => Option::from(BooleanComparisonOperator::Or),
             "&" | "AND" => Option::from(BooleanComparisonOperator::And),
-            _ => {
-                None
-            }
+            _ => None,
         }
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub enum Instruction {
+    Operation(Operation),
+    BoolCompOp(BooleanComparisonOperator),
+    Negate(String),
+    Parentheses(InstructionStack),
+}
 
 pub type TokenStack = Vec<String>;
 
 pub type InstructionStack = Vec<Instruction>;
+
+pub enum ParenthesesMatch {
+    TooManyLeft,
+    TooManyRight,
+    True,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum RuntimeError {
+    InvalidOperation(String),
+    InvalidColumn(String),
+}
+
+#[derive(Debug, Clone)]
+pub enum TableParsingError {}
+
+#[derive(Debug, PartialEq)]
+pub enum CompileError {
+    InvalidToken(String),
+    InvalidColumn(String),
+    NoMatchingParenthesis(String),
+    NoColumnsDetected,
+    NotEnoughTokens(TokenStack),
+    WTFIsThisInput(TokenStack),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum FITLError {
+    CompileError(CompileError),
+    RuntimeError(RuntimeError),
+}

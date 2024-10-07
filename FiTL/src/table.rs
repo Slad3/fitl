@@ -1,9 +1,10 @@
-use std::fmt::Write;
+use crate::data_structures::TableParsingError;
+use serde_json::{json, Value};
 use std::collections::HashMap;
-use std::fmt::{Display};
+use std::fmt::Display;
+use std::fmt::Write;
 use std::hash::Hash;
 use std::str::FromStr;
-use serde_json::{json, Value};
 
 pub type Row = HashMap<String, String>;
 
@@ -13,7 +14,6 @@ pub struct Table {
     current_index: usize,
 }
 
-
 impl Table {
     pub fn new(columns: HashMap<String, Vec<String>>) -> Table {
         Table {
@@ -22,7 +22,7 @@ impl Table {
         }
     }
 
-    pub fn from_json_array(input_json_array: Value) -> Table {
+    pub fn from_json_array(input_json_array: Value) -> Result<Table, TableParsingError> {
         let mut result_hash: HashMap<String, Vec<String>> = HashMap::new();
 
         for json_row in input_json_array.as_array().unwrap().iter() {
@@ -32,10 +32,10 @@ impl Table {
             }
         }
 
-        Table {
+        Ok(Table {
             columns: result_hash,
             current_index: 0,
-        }
+        })
     }
 
     pub fn from_rows(rows: Vec<Row>) -> Table {
@@ -61,7 +61,6 @@ impl Table {
     }
 }
 
-
 impl Iterator for Table {
     type Item = Row;
 
@@ -71,7 +70,12 @@ impl Iterator for Table {
         let mut changed = false;
 
         for column_name in self.columns.keys().into_iter() {
-            let value = match self.columns.get(column_name).expect("Column Name doesn't exist").get(self.current_index) {
+            let value = match self
+                .columns
+                .get(column_name)
+                .expect("Column Name doesn't exist")
+                .get(self.current_index)
+            {
                 None => "",
                 Some(val) => {
                     changed = true;
@@ -92,13 +96,57 @@ impl Iterator for Table {
     }
 }
 
-
 impl PartialEq for Table {
     fn eq(&self, other: &Self) -> bool {
         self.columns == other.columns
     }
     fn ne(&self, other: &Self) -> bool {
         self.columns != other.columns
+    }
+}
+
+impl<'a> IntoIterator for &'a Table {
+    type Item = Row;
+    type IntoIter = TableIterator<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        TableIterator {
+            table: self,
+            current_index: 0,
+        }
+    }
+}
+
+pub struct TableIterator<'a> {
+    table: &'a Table,
+    current_index: usize,
+}
+
+impl<'a> Iterator for TableIterator<'a> {
+    type Item = Row;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut result: Row = HashMap::new();
+        let mut changed = false;
+
+        for column_name in self.table.columns.keys() {
+            let value = match self.table.columns.get(column_name)?.get(self.current_index) {
+                None => "",
+                Some(val) => {
+                    changed = true;
+                    val
+                }
+            };
+            result.insert(column_name.clone(), value.to_string());
+        }
+
+        self.current_index += 1;
+
+        if changed {
+            Some(result)
+        } else {
+            None
+        }
     }
 }
 
@@ -119,10 +167,9 @@ mod tests {
         ])
     }
 
-
     #[test]
     fn test_table() {
-        let table: Table = Table::from_json_array(get_test_json_table());
+        let table: Table = Table::from_json_array(get_test_json_table()).unwrap();
 
         let column = table.get_column_names().get(0).unwrap().clone();
 

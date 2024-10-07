@@ -3,7 +3,7 @@ from pprint import pprint
 from data_structures import BooleanComparisonOperator, if_boolean_comparison_operator, \
     if_comparison_operator, NEGATE_VALUE, ComparisonOperator, tokenize, \
     Operation_Stack
-from Python.data_structures import CASE_SENS_VALUE, Operation
+from Prototype.Python.data_structures import CASE_SENS_VALUE, Operation
 
 
 def parse(tokens: list[str]) -> list[Operation_Stack] | str:
