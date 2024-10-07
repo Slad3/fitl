@@ -2,7 +2,6 @@ use crate::data_structures::{
     BooleanComparisonOperator, ComparisonOperator, Instruction, InstructionStack, Operation,
     RuntimeError,
 };
-use serde_json::{json, Value};
 
 use crate::table::{Row, Table};
 
@@ -102,6 +101,7 @@ mod tests {
     use crate::compile::compile_tokens;
     use crate::data_structures::TableParsingError;
     use crate::tokenize::tokenize;
+    use serde_json::{json, Value};
 
     fn get_test_columns() -> Vec<String> {
         vec![

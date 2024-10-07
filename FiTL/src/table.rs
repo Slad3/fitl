@@ -1,10 +1,6 @@
 use crate::data_structures::TableParsingError;
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::collections::HashMap;
-use std::fmt::Display;
-use std::fmt::Write;
-use std::hash::Hash;
-use std::str::FromStr;
 
 pub type Row = HashMap<String, String>;
 
@@ -153,6 +149,7 @@ impl<'a> Iterator for TableIterator<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     fn get_test_json_table() -> Value {
         json!([
