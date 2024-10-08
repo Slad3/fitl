@@ -1,3 +1,5 @@
 .idea
 target/
 Prototype/Python/.venv/
+
+*.pyc
