@@ -1,3 +1,5 @@
+use wasm_bindgen::prelude::wasm_bindgen;
+
 #[derive(Debug, PartialEq)]
 pub enum ComparisonOperator {
     Equals,
@@ -82,6 +84,13 @@ pub enum Instruction {
 pub type TokenStack = Vec<String>;
 
 pub type InstructionStack = Vec<Instruction>;
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub enum TableFormat {
+    Custom,
+    JsonArray,
+}
 
 pub enum ParenthesesMatch {
     TooManyLeft,

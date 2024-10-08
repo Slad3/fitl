@@ -92,7 +92,7 @@ pub fn filter_table(
         }
     }
 
-    Ok(Table::from_rows(result_rows))
+    Ok(Table::from_rows(result_rows, table.get_original_format()))
 }
 
 #[cfg(test)]
@@ -111,7 +111,7 @@ mod tests {
         ]
     }
 
-    fn get_test_json_table() -> Value {
+    fn get_test_json_table() -> Vec<Value> {
         json!([
             {"artist": "2Pac", "album": "Me Against the World", "title": "So Many Tears"},
             {"artist": "2Pac", "album": "Me Against the World", "title": "Lord Knows"},
@@ -121,11 +121,11 @@ mod tests {
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Toss It Up"},
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Me And My Girlfriend"},
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds"},
-        ])
+        ]).as_array().unwrap().clone()
     }
 
     fn get_test_table() -> Result<Table, TableParsingError> {
-        Table::from_json_array(get_test_json_table())
+        Table::from_json_array(&get_test_json_table())
     }
 
     fn get_test_row() -> Row {
@@ -207,7 +207,7 @@ mod tests {
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Toss It Up"},
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Me And My Girlfriend"},
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds"},
-        ])).unwrap();
+        ]).as_array().unwrap()).unwrap();
 
         assert_eq!(result_table, expected_table);
     }
