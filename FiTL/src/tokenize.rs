@@ -3,6 +3,7 @@ use crate::data_structures::{
 };
 use std::ops::Add;
 
+#[allow(dead_code)]
 fn check_parenthesis(input_string: &str) -> ParenthesesMatch {
     let mut left: u32 = 0;
     let mut right: u32 = 0;
@@ -27,19 +28,20 @@ fn check_parenthesis(input_string: &str) -> ParenthesesMatch {
 pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
     let mut result_list: TokenStack = Vec::new();
 
-    match check_parenthesis(input_string) {
-        ParenthesesMatch::TooManyLeft => {
-            return Err(CompileError::NoMatchingParenthesis(
-                "Too many '(' parentheses".to_string(),
-            ))
-        }
-        ParenthesesMatch::TooManyRight => {
-            return Err(CompileError::NoMatchingParenthesis(
-                "Too many ')' parentheses".to_string(),
-            ))
-        }
-        ParenthesesMatch::True => {}
-    }
+    // TODO fix check_parenthesis
+    // match check_parenthesis(input_string) {
+    //     ParenthesesMatch::TooManyLeft => {
+    //         return Err(CompileError::NoMatchingParenthesis(
+    //             "Too many '(' parentheses".to_string(),
+    //         ))
+    //     }
+    //     ParenthesesMatch::TooManyRight => {
+    //         return Err(CompileError::NoMatchingParenthesis(
+    //             "Too many ')' parentheses".to_string(),
+    //         ))
+    //     }
+    //     ParenthesesMatch::True => {}
+    // }
 
     let split_string: Vec<&str> = input_string.split_whitespace().collect();
 

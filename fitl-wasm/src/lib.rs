@@ -13,13 +13,12 @@ use wasm_bindgen::JsValue;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 fn format_js_error(level: &str, details: &String) -> JsValue {
-
     serde_wasm_bindgen::to_value(&json!({
         "error": {
         "level": level,
         "details": details
-    }})).unwrap()
-
+    }}))
+    .unwrap()
 }
 
 fn table_format_from_string(table_format_input: &String) -> Option<TableFormat> {
@@ -92,7 +91,9 @@ pub fn fitl_filter(
     };
 
     match filter(&compiled_query, &table) {
-        Ok(result_table) => Ok(serde_wasm_bindgen::to_value(&result_table.to_json_array()).unwrap()),
+        Ok(result_table) => {
+            Ok(serde_wasm_bindgen::to_value(&result_table.to_json_array()).unwrap())
+        }
         Err(error) => Err(format_js_error("FilterError", &format!("{:?}", error))),
     }
 }
