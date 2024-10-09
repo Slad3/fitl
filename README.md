@@ -1,9 +1,8 @@
-# FiTL (Filter Table (query) Language)
+# FiTL (Filter Table (Query) Language)
 
-### Pronounced like "Fiddle" (The Q is Silent)
+### Pronounced like "Fiddle"
 
-A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to
-implement, easy to write, but also easy to specify and detail.
+A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to implement, easy to write, but also easy to specify and detail.
 
 ## How does it differ from SQL?
 - Designed specifically to write quickly in the moment
