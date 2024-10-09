@@ -5,6 +5,7 @@
 A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to implement, easy to write, but also easy to specify and detail.
 
 ## How does it differ from SQL?
+
 - Designed specifically to write quickly in the moment
 - Filters single tables only (no joining tables or referencing other tables)
 - Super easy for non-programmer people to learn, though deep enough to master and create complex and detailed queries
@@ -122,6 +123,6 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 - Add more ways to create a table
 - Add build scripts for
     - Standard Rust library
-    - WASM js library
+    - WASM js library   
     - Compiled python library
 - Build and deploy simple frontend for easy public testing 
