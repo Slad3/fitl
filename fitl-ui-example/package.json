@@ -22,7 +22,7 @@
     "svelte": "^3.55.0"
   },
   "dependencies": {
-    "fitl-wasm": "^1.0.3",
+    "fitl-wasm": "file:../fitl-wasm/pkg",
     "sirv-cli": "^2.0.0"
   },
   "packageManager": "pnpm@8.15.6+sha1.8105075ad0aa306138be128c017e9c41e28ecffa"

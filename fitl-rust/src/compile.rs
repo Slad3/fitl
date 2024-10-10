@@ -11,6 +11,10 @@ pub fn compile_tokens(
         return Err(CompileError::NoColumnsDetected);
     }
 
+    if tokens.is_empty() {
+        return Ok(InstructionStack::new());
+    }
+
     let (result_tokens, instruction_stack) = parse_s(tokens.clone(), columns)?;
 
     if result_tokens.len() > 0 {

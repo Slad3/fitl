@@ -201,13 +201,5 @@ mod tests {
         let table: Table = Table::from_json_array(&get_test_json_table()).unwrap();
 
         let column = table.get_column_names().get(0).unwrap().clone();
-
-        println!("{:?}", &table.get_column_names());
-        println!("{}", &column);
-
-        for row in table {
-            println!("{}", row.get(column.as_str()).unwrap());
-            // println!("{:?}", row);
-        }
     }
 }

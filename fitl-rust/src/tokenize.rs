@@ -26,6 +26,9 @@ fn check_parenthesis(input_string: &str) -> ParenthesesMatch {
 }
 
 pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
+    if input_string.is_empty() {
+        return Ok(TokenStack::new());
+    }
     let mut result_list: TokenStack = Vec::new();
 
     // TODO fix check_parenthesis
@@ -58,7 +61,7 @@ pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
 
         if !in_quotes {
             loop {
-                match temp_value.chars().next().unwrap() {
+                match temp_value.chars().next().unwrap_or('a') {
                     '(' => {
                         result_list.push("(".to_string());
                         temp_value.remove(0);
@@ -79,7 +82,7 @@ pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
         let mut reversed_stack = Vec::new();
         let mut temp_reversed: String = temp_value.chars().rev().collect();
 
-        while temp_reversed.chars().next().unwrap() == ')' {
+        while temp_reversed.chars().next().unwrap_or('a') == ')' {
             reversed_stack.push(")".to_string());
             temp_reversed.remove(0);
         }

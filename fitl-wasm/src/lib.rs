@@ -8,6 +8,36 @@ use serde_json::{json, Value};
 use serde_wasm_bindgen;
 use wasm_bindgen::JsValue;
 
+
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    // The `console.log` is quite polymorphic, so we can bind it with multiple
+    // signatures. Note that we need to use `js_name` to ensure we always call
+    // `log` in JS.
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    // Multiple arguments too!
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
+}
+
+#[macro_export] macro_rules! console_log {
+
+    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+}
+
+
+
+
+
+
+
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -18,7 +48,7 @@ fn format_js_error(level: &str, details: &String) -> JsValue {
         "level": level,
         "details": details
     }}))
-    .unwrap()
+        .unwrap()
 }
 
 fn table_format_from_string(table_format_input: &String) -> Option<TableFormat> {
@@ -45,7 +75,7 @@ pub fn test_json_input(input_table: JsValue) -> Result<JsValue, JsValue> {
 
 #[wasm_bindgen(js_name = "fitl_filter")]
 pub fn fitl_filter(
-    input_query: String,
+    query: String,
     input_table: JsValue,
     table_format: String,
 ) -> Result<JsValue, JsValue> {
@@ -75,6 +105,7 @@ pub fn fitl_filter(
         }
     };
 
+
     let table = match table_result {
         Ok(table) => table,
         Err(error) => {
@@ -84,6 +115,9 @@ pub fn fitl_filter(
             ))
         }
     };
+
+    let input_query = query.clone().trim().to_string();
+
 
     let compiled_query = match compile_query(&input_query, &table.get_column_names()) {
         Ok(result) => result,

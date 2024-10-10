@@ -1,51 +1,66 @@
-<script>
+<script lang="ts">
   import "./app.css";
   import { onMount } from "svelte";
-  //   import init, { test_json_input, fitl_filter } from "../public/buildasdfasdf/fitl_wasm.js"; // Working wasm solution
 
   import DataTable from "./DataTable.svelte";
+  import { example_table } from "./test_data.js";
 
   import init, { fitl_filter } from "fitl-wasm";
 
-  let example_table = [
-    { artist: "2Pac", album: "Me Against the World", title: "So Many Tears" },
-    { artist: "2Pac", album: "Me Against the World", title: "Lord Knows" },
-    { artist: "2Pac", album: "All Eyez on Me", title: "All Eyez on Me" },
-    { artist: "2Pac", album: "All Eyez on Me", title: "2 Of Amerikaz Most Wanted" },
-    { artist: "2Pac", album: "All Eyez on Me", title: "Heartz of Men" },
-    { artist: "Makaveli", album: "The Don Killuminati: The 7 Day Theory", title: "Toss It Up" },
-    {
-      artist: "Makaveli",
-      album: "The Don Killuminati: The 7 Day Theory",
-      title: "Me And My Girlfriend",
-    },
-    { artist: "Makaveli", album: "The Don Killuminati: The 7 Day Theory", title: "Against All Odds" },
-  ];
+  let queryTextBox;
 
   let query = "";
   let result_table = [];
 
   onMount(async () => {
     await init();
-    console.log(example_table);
     result_table = example_table;
+    queryTextBox = document.getElementById("query");
   });
+
+  function colorQueryBox(input) {
+    if (!queryTextBox) {
+      return;
+    }
+
+    let color = input ? "green" : "red";
+
+    queryTextBox.style.borderColor = color;
+  }
+
+  function cleanTable(table) {
+    return table.map((map) => Object.fromEntries(map));
+  }
+
+  function submit() {
+    try {
+      result_table = cleanTable(fitl_filter(query, example_table, "JSARRAY"));
+    } catch (error) {
+      if (error.name === "RuntimeError") {
+        console.error("Runtime Error");
+        result_table = example_table;
+      } else {
+        result_table = [];
+        console.error(query);
+        console.error(error);
+      }
+    }
+  }
 
   function onQueryChange(event) {
     query = event.target.value;
     try {
-      result_table = fitl_filter(query, example_table, "JSARRAY").map((map) => Object.fromEntries(map));
-      console.log(result_table.length);
+      cleanTable(fitl_filter(query, example_table, "JSARRAY"));
+      colorQueryBox(true);
     } catch (error) {
-      result_table = [];
-      console.error(error);
+      colorQueryBox(false);
     }
   }
 </script>
 
 <main>
   <h1>FiTL Example</h1>
-  <div class="form__group field">
+  <span class="form__group field">
     <input
       type="text"
       id="query"
@@ -57,7 +72,10 @@
       required
     />
     <label for="query" class="form__label">Query</label>
-  </div>
+    <button id="submitButton" class="filter_button" on:click={submit}>Filter</button>
+  </span>
+
+  <br />
   <br />
 
   <DataTable data={result_table}></DataTable>
@@ -73,8 +91,7 @@
 
   :root {
     --primary: #9b9b9b;
-    /* --secondary: #38ef7d; */
-    --secondary: black;
+    --secondary: red;
     --white: #fff;
     --gray: #9b9b9b;
   }
@@ -88,7 +105,7 @@
 
   .form__field {
     font-family: inherit;
-    width: 100%;
+    width: 80%;
     border: 0;
     border-bottom: 2px solid var(--gray);
     outline: 0;
@@ -132,7 +149,8 @@
     padding-bottom: 6px;
     font-weight: 700;
     border-width: 3px;
-    border-image: linear-gradient(to right, var(--primary), var(--secondary));
+    /* border-image: red; */
+    border-color: gray;
     border-image-slice: 1;
   }
 
@@ -141,15 +159,49 @@
     box-shadow: none;
   }
 
-  /* demo */
-  body {
-    font-family: "Poppins", sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    font-size: 1.5rem;
-    background-color: #222222;
+  .filter_button {
+    width: 19%;
+    height: 100%;
+    font-size: 1.3rem;
+    background-color: #222;
+    border-radius: 4px;
+    border-style: none;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+    max-width: none;
+    min-height: 44px;
+    min-width: 10px;
+    outline: none;
+    overflow: hidden;
+    padding: 9px 20px 8px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  .filter_button:hover,
+  .filter_button:focus {
+    opacity: 0.75;
+  }
+
+  @media (max-width: 768px) {
+    .form__field {
+      width: 100%;
+    }
+
+    .filter_button {
+      margin-top: 10px;
+      width: 100%;
+    }
   }
 </style>

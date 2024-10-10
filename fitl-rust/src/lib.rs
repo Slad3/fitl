@@ -8,6 +8,7 @@ pub mod table;
 
 use crate::table::Table;
 use crate::tokenize::tokenize;
+use serde_json::Value;
 
 use crate::compile::compile_tokens;
 use crate::data_structures::{FITLError, InstructionStack};
@@ -57,6 +58,10 @@ pub fn filter(compiled_query: &InstructionStack, table: &Table) -> Result<Table,
 }
 
 pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError> {
+    // if input_string.is_empty() {
+    //     return Ok(table.clone());
+    // }
+
     let instruction_stack = match compile_query(input_string, &table.get_column_names()) {
         Ok(stack) => stack,
         Err(error) => return Err(FITLError::CompileError(error)),
@@ -65,5 +70,38 @@ pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError
     match filter_table(&instruction_stack, table) {
         Ok(result_table) => Ok(result_table),
         Err(error) => Err(FITLError::RuntimeError(error)),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    fn get_test_json_table() -> Vec<Value> {
+        json!([
+            {"artist": "2Pac", "album": "Me Against the World", "title": "So Many Tears"},
+            {"artist": "2Pac", "album": "Me Against the World", "title": "Lord Knows"},
+            {"artist": "2Pac", "album": "All Eyez on Me", "title": "All Eyez on Me"},
+            {"artist": "2Pac", "album": "All Eyez on Me", "title": "2 Of Amerikaz Most Wanted"},
+            {"artist": "2Pac", "album": "All Eyez on Me", "title": "Heartz of Men"},
+            {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Toss It Up"},
+            {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Me And My Girlfriend"},
+            {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds"},
+        ]).as_array().unwrap().clone()
+    }
+
+    #[test]
+    fn test_empty_query() {
+        let table: Table = Table::from_json_array(&get_test_json_table()).unwrap();
+
+        let query = "!".to_string();
+
+        let instruction_stack = match compile_query(&query, &table.get_column_names()) {
+            Ok(stack) => stack,
+            Err(error) => panic!("{:?}", error),
+        };
+
+        // println!("{:?}", filter_full(&query, &table))
     }
 }
