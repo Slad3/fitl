@@ -4,8 +4,9 @@
 
   import DataTable from "./DataTable.svelte";
   import { example_table } from "./test_data.js";
+  import { cleanMap, mapToObj, printError } from "./utils.js";
 
-  import init, { fitl_filter } from "fitl-wasm";
+  import init, { fitl_filter, check_syntax } from "fitl-wasm";
 
   let queryTextBox;
 
@@ -22,27 +23,19 @@
     if (!queryTextBox) {
       return;
     }
-
-    let color = input ? "green" : "red";
-
-    queryTextBox.style.borderColor = color;
-  }
-
-  function cleanTable(table) {
-    return table.map((map) => Object.fromEntries(map));
+    queryTextBox.style.borderColor = input ? "green" : "red";
   }
 
   function submit() {
     try {
-      result_table = cleanTable(fitl_filter(query, example_table, "JSARRAY"));
+      result_table = cleanMap(fitl_filter(query, example_table, "JSARRAY"));
     } catch (error) {
       if (error.name === "RuntimeError") {
         console.error("Runtime Error");
         result_table = example_table;
       } else {
         result_table = [];
-        console.error(query);
-        console.error(error);
+        printError(mapToObj(error));
       }
     }
   }
@@ -50,11 +43,29 @@
   function onQueryChange(event) {
     query = event.target.value;
     try {
-      cleanTable(fitl_filter(query, example_table, "JSARRAY"));
+      let temp = check_syntax(query, ["artist", "album", "title"]);
       colorQueryBox(true);
+      submit();
     } catch (error) {
+      printError(mapToObj(error));
+
       colorQueryBox(false);
     }
+  }
+
+  function example1() {
+    query = "artist =: pac";
+    onQueryChange({ target: { value: query } });
+  }
+
+  function example2() {
+    query = "album =: the";
+    onQueryChange({ target: { value: query } });
+  }
+
+  function example3() {
+    query = "artist = 2Pac | artist =: Makaveli";
+    onQueryChange({ target: { value: query } });
   }
 </script>
 
@@ -74,7 +85,11 @@
     <label for="query" class="form__label">Query</label>
     <button id="submitButton" class="filter_button" on:click={submit}>Filter</button>
   </span>
-
+  <br />
+  <br />
+  <button class="filter_button example_button" on:click={example1}>All Pac Songs</button>
+  <button class="filter_button example_button" on:click={example2}>All "the" Albums</button>
+  <button class="filter_button example_button" on:click={example3}>All Pac Songs</button>
   <br />
   <br />
 
@@ -187,6 +202,13 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+  }
+
+  .example_button {
+    width: 30%;
+    margin-left: 1%;
+    margin-right: 1%;
+    font-size: 0.9rem;
   }
 
   .filter_button:hover,

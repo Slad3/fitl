@@ -95,11 +95,13 @@ mod tests {
     fn test_empty_query() {
         let table: Table = Table::from_json_array(&get_test_json_table()).unwrap();
 
-        let query = "!".to_string();
+        // let query = "!(artist =: Pac)".to_string();
+        let query = "(artist =: Pac)".to_string();
+        // let query = "!".to_string();
 
-        let instruction_stack = match compile_query(&query, &table.get_column_names()) {
-            Ok(stack) => stack,
-            Err(error) => panic!("{:?}", error),
+        match filter_full(&query, &table) {
+            Ok(result) => println!("{}", result.to_json_array().as_array().unwrap().len()),
+            Err(error) => println!("{:?}", error),
         };
 
         // println!("{:?}", filter_full(&query, &table))

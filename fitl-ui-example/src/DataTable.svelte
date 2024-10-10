@@ -6,8 +6,8 @@
   <thead>
     <tr>
       <th>Artist</th>
-      <th>Album</th>
       <th>Title</th>
+      <th>Album</th>
     </tr>
   </thead>
   <tbody>

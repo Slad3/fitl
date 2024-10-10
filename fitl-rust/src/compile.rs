@@ -30,15 +30,15 @@ fn parse_s(
 ) -> Result<(TokenStack, InstructionStack), CompileError> {
     let mut temp_stack: InstructionStack = Vec::new();
 
-    if temp_tokens[0] == NEGATE_VALUE.to_string() {
+    if !temp_tokens.is_empty() && temp_tokens[0] == NEGATE_VALUE.to_string() {
         let (tokens, result_stack) = parse_neg(temp_tokens.split_off(1), columns)?;
         temp_stack.extend(result_stack);
         temp_tokens = tokens;
-    } else if temp_tokens[0] == "(" {
+    } else if !temp_tokens.is_empty() && temp_tokens[0] == "(" {
         let (tokens, result_stack) = parse_par(temp_tokens.split_off(1), columns)?;
         temp_stack.push(Instruction::Parentheses(result_stack));
         temp_tokens = tokens;
-    } else {
+    } else if !temp_tokens.is_empty() && columns.contains(&temp_tokens[0]) {
         let (tokens, result_operation) = parse_op(temp_tokens, columns)?;
         temp_stack.push(Instruction::Operation(result_operation));
         temp_tokens = tokens;
@@ -116,11 +116,11 @@ fn parse_par(
     par_stack.extend(result_stack);
 
     let mut tokens = result_tokens.clone();
-    if tokens.is_empty() {
-        return Err(CompileError::NoMatchingParenthesis(
-            temp_tokens.join(" ").to_string(),
-        ));
-    }
+    // if tokens.is_empty() {
+    //     return Err(CompileError::NoMatchingParenthesis(
+    //         temp_tokens.join(" ").to_string(),
+    //     ));
+    // }
     let mut first_character = &tokens.clone()[0];
 
     while first_character != ")" {

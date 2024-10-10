@@ -106,6 +106,8 @@ pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
         }
     }
 
+    result_list.retain(|s| !s.is_empty());
+
     Ok(result_list)
 }
 

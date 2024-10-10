@@ -8,36 +8,6 @@ use serde_json::{json, Value};
 use serde_wasm_bindgen;
 use wasm_bindgen::JsValue;
 
-
-#[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-
-    // The `console.log` is quite polymorphic, so we can bind it with multiple
-    // signatures. Note that we need to use `js_name` to ensure we always call
-    // `log` in JS.
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_u32(a: u32);
-
-    // Multiple arguments too!
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_many(a: &str, b: &str);
-}
-
-#[macro_export] macro_rules! console_log {
-
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
-
-
-
-
-
-
-
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -72,6 +42,17 @@ pub fn test_json_input(input_table: JsValue) -> Result<JsValue, JsValue> {
         Err(error) => Err(format_js_error("FilterError", &format!("{:?}", error))),
     }
 }
+
+#[wasm_bindgen]
+pub fn check_syntax(query: String, columns: Vec<String>) -> Result<bool, JsValue> {
+    let input_query = query.clone().trim().to_string();
+
+    match compile_query(&input_query, &columns) {
+        Ok(_) => Ok(true),
+        Err(error) => Err(format_js_error("CompileError", &format!("{:?}", error))),
+    }
+}
+
 
 #[wasm_bindgen(js_name = "fitl_filter")]
 pub fn fitl_filter(

@@ -51,11 +51,12 @@ fn boolean_operate(
 
 fn filter_row(instruction_stack: &InstructionStack, row: &Row) -> Result<bool, RuntimeError> {
     let mut current_bool_value: bool = true;
+    let mut negate_next: bool = false;
     let mut boolean_comparison_operator: BooleanComparisonOperator = BooleanComparisonOperator::And;
 
     for instruction in instruction_stack {
         match instruction {
-            Instruction::Negate(_) => current_bool_value = !current_bool_value,
+            Instruction::Negate(_) => negate_next = !negate_next,
             Instruction::BoolCompOp(bool_operator) => {
                 boolean_comparison_operator = bool_operator.clone()
             }
@@ -65,7 +66,12 @@ fn filter_row(instruction_stack: &InstructionStack, row: &Row) -> Result<bool, R
                     &current_bool_value,
                     &operation_result,
                     &boolean_comparison_operator,
-                )
+                );
+
+                if negate_next {
+                    current_bool_value = !current_bool_value;
+                    negate_next = false;
+                }
             }
             Instruction::Parentheses(parenth_stack) => {
                 let operation_result = filter_row(parenth_stack, row)?;
@@ -73,7 +79,11 @@ fn filter_row(instruction_stack: &InstructionStack, row: &Row) -> Result<bool, R
                     &current_bool_value,
                     &operation_result,
                     &boolean_comparison_operator,
-                )
+                );
+                if negate_next {
+                    current_bool_value = !current_bool_value;
+                    negate_next = false;
+                }
             }
         }
     }
