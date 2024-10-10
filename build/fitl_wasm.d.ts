@@ -6,12 +6,18 @@
 */
 export function test_json_input(input_table: any): any;
 /**
-* @param {string} input_query
+* @param {string} query
+* @param {(string)[]} columns
+* @returns {boolean}
+*/
+export function check_syntax(query: string, columns: (string)[]): boolean;
+/**
+* @param {string} query
 * @param {any} input_table
 * @param {string} table_format
 * @returns {any}
 */
-export function fitl_filter(input_query: string, input_table: any, table_format: string): any;
+export function fitl_filter(query: string, input_table: any, table_format: string): any;
 /**
 */
 export enum TableFormat {
@@ -24,6 +30,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly test_json_input: (a: number, b: number) => void;
+  readonly check_syntax: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly fitl_filter: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
