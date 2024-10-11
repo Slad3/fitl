@@ -42,6 +42,8 @@ fn parse_s(
         let (tokens, result_operation) = parse_op(temp_tokens, columns)?;
         temp_stack.push(Instruction::Operation(result_operation));
         temp_tokens = tokens;
+    } else if !temp_tokens.is_empty() && !columns.contains(&temp_tokens[0]) {
+        return Err(CompileError::InvalidColumn(temp_tokens[0].clone()));
     }
 
     if !temp_tokens.is_empty() {
@@ -262,6 +264,8 @@ mod tests {
         let columns = get_test_columns();
 
         let result = compile_tokens(input_query, &columns);
+
+        println!("{:?}", result);
 
         assert!(matches!(result, Err(CompileError::InvalidColumn(_))));
     }

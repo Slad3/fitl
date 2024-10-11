@@ -30,6 +30,7 @@ extern "C" {
     fn log_many(a: &str, b: &str);
 }
 
+#[allow(unused_macros)]
 macro_rules! console_log {
 
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))

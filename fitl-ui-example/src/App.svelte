@@ -7,16 +7,23 @@
   import { cleanMap, mapToObj, printError } from "./utils.js";
 
   import init, { fitl_filter, check_syntax } from "fitl-wasm";
+  import Help from "./Help.svelte";
 
   let queryTextBox;
+  let filterButton;
+  let queryHelpButton;
 
   let query = "";
   let result_table = [];
+
+  let showModal = false;
 
   onMount(async () => {
     await init();
     result_table = example_table;
     queryTextBox = document.getElementById("query");
+    filterButton = document.getElementById("submitButton");
+    queryHelpButton = document.getElementById("queryHelp");
   });
 
   function colorQueryBox(input) {
@@ -43,9 +50,11 @@
   function onQueryChange(event) {
     query = event.target.value;
     try {
-      let temp = check_syntax(query, ["artist", "album", "title"]);
+      //   let asdfawsdf = check_syntax(query, ["artist", "album", "title"]);
+      let temp = cleanMap(fitl_filter(query, example_table, "JSARRAY"));
+      result_table = temp;
+
       colorQueryBox(true);
-      submit();
     } catch (error) {
       printError(mapToObj(error));
 
@@ -54,7 +63,7 @@
   }
 
   function example1() {
-    query = "artist =: pac";
+    query = "artist =: erykah";
     onQueryChange({ target: { value: query } });
   }
 
@@ -64,13 +73,21 @@
   }
 
   function example3() {
-    query = "artist = 2Pac | artist =: Makaveli";
+    query = 'artist = "black thought" | artist =: roots';
     onQueryChange({ target: { value: query } });
+  }
+
+  function closeModal() {
+    showModal = false;
+  }
+
+  function toggleModal() {
+    showModal = !showModal;
   }
 </script>
 
 <main>
-  <h1>FiTL Example</h1>
+  <h1>FiTL Playground</h1>
   <span class="form__group field">
     <input
       type="text"
@@ -83,16 +100,34 @@
       required
     />
     <label for="query" class="form__label">Query</label>
-    <button id="submitButton" class="filter_button" on:click={submit}>Filter</button>
+    <!-- <button id="submitButton" class="filter_button" on:click={submit}>Filter</button> -->
   </span>
   <br />
   <br />
-  <button class="filter_button example_button" on:click={example1}>All Pac Songs</button>
-  <button class="filter_button example_button" on:click={example2}>All "the" Albums</button>
-  <button class="filter_button example_button" on:click={example3}>All Pac Songs</button>
+  <button class="filter_button example_button" on:click={example1}>All Erykah Badu Songs</button>
+  <button class="filter_button example_button" on:click={example2}>All Albums with "the"</button>
+  <button class="filter_button example_button" on:click={example3}>All Black Thought Songs</button>
   <br />
-  <br />
-
+  <span id="tableInfo">
+    <button id="queryHelp" class="infoButton" on:click={toggleModal}>
+      {#if showModal}
+        Close Query Help
+      {:else}
+        Open Query Help
+      {/if}
+    </button>
+    <div class="tableSizeInfo">
+      Current Table Length: {result_table.length} | Original Table Length: {example_table.length}
+    </div></span
+  >
+  {#if showModal}
+    <div class="backdrop" on:click={closeModal}></div>
+    <div class="modal">
+      <div class="modal-content">
+        <Help></Help>
+      </div>
+    </div>
+  {/if}
   <DataTable data={result_table}></DataTable>
 </main>
 
@@ -120,7 +155,8 @@
 
   .form__field {
     font-family: inherit;
-    width: 80%;
+    /* width: 80%; */
+    width: 100%;
     border: 0;
     border-bottom: 2px solid var(--gray);
     outline: 0;
@@ -178,7 +214,7 @@
     width: 19%;
     height: 100%;
     font-size: 1.3rem;
-    background-color: #222;
+    background-color: #2c2c2c;
     border-radius: 4px;
     border-style: none;
     box-sizing: border-box;
@@ -209,6 +245,7 @@
     margin-left: 1%;
     margin-right: 1%;
     font-size: 0.9rem;
+    background-color: #171717;
   }
 
   .filter_button:hover,
@@ -216,9 +253,61 @@
     opacity: 0.75;
   }
 
+  #tableInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .infoButton {
+    font-size: 1rem;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    /* border-style: ; */
+    border-style: none;
+    /* box-sizing: border-box; */
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    line-height: 1.5;
+    min-width: 10px;
+    outline: 1px solid yellow;
+    overflow: hidden;
+    padding: 9px 20px 8px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+
+    align-self: left;
+    margin-right: auto;
+
+    min-width: 20%;
+    max-width: 40%;
+    height: 35px;
+    /* padding: 0px; */
+  }
+
+  .tableSizeInfo {
+    margin-left: auto;
+    text-align: right;
+  }
+
   @media (max-width: 768px) {
     .form__field {
       width: 100%;
+    }
+
+    .infoButton {
+      font-size: 12px;
+      height: 50px;
     }
 
     .filter_button {

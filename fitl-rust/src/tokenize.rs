@@ -90,12 +90,21 @@ pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
         temp_value = temp_reversed.chars().rev().collect();
 
         if in_quotes && temp_value.ends_with('"') {
-            let temp = &split_string[start_index.unwrap()..=index - 1]
-                .join(" ")
-                .add(" ")
-                .add(&*temp_value);
-            let token = &temp[1..temp.len() - 1];
-            result_list.push(token.to_string());
+            let token: String;
+
+            if start_index.unwrap() == index {
+                token = temp_value[1..temp_value.len() - 1].to_string();
+            } else {
+                let temp = split_string[start_index.unwrap()..=index - 1]
+                    .join(" ")
+                    .add(" ")
+                    .add(&*temp_value)
+                    .clone();
+
+                token = temp[1..temp.len() - 1].to_string();
+            }
+
+            result_list.push(token);
             in_quotes = false;
         } else if !in_quotes {
             result_list.push(temp_value);

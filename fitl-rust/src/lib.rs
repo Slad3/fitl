@@ -8,7 +8,6 @@ pub mod table;
 
 use crate::table::Table;
 use crate::tokenize::tokenize;
-use serde_json::Value;
 
 use crate::compile::compile_tokens;
 use crate::data_structures::{FITLError, InstructionStack};
@@ -77,6 +76,7 @@ pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError
 mod tests {
     use super::*;
     use serde_json::json;
+    use serde_json::Value;
 
     fn get_test_json_table() -> Vec<Value> {
         json!([
@@ -96,7 +96,8 @@ mod tests {
         let table: Table = Table::from_json_array(&get_test_json_table()).unwrap();
 
         // let query = "!(artist =: Pac)".to_string();
-        let query = "(artist =: Pac)".to_string();
+        // let query = r#"(artist =: "Pac") | artist =: Makaveli"#.to_string();
+        let query = r#"artist =: pac"#.to_string();
         // let query = "!".to_string();
 
         match filter_full(&query, &table) {
