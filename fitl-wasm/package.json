@@ -1,6 +1,6 @@
 {
     "name": "fitl-wasm",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "description": "Wasm wrapper for FiTL, specifically the fitl-rust crate.",
     "author": {"name": "Slad3"},
     "keywords": [

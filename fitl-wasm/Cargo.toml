@@ -1,10 +1,17 @@
 [package]
 name = "fitl-wasm"
-version = "1.0.3"
+version = "1.0.6"
 authors = ["Slad3"]
 description = "A WebAssembly package for the FilterTableQueryLanguage project."
 edition = "2018"
 license = "MIT"
+keywords = [
+        "wasm",
+        "query-language",
+        "tables",
+        "data-filtering",
+        "wasm-bindgen"
+    ]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
