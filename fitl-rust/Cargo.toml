@@ -1,8 +1,20 @@
 [package]
 name = "fitl"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+authors = ["Slad3"]
+description = "A simple easy to learn and remember language used to filter down a table of data within a simple string."
+exclude = ["Prototype/"]
+homepage = "https://github.com/Slad3/FilterTableQueryLanguage"
+license = "MIT"
+license-file = "LICENSE"
+repository = "https://github.com/Slad3/FilterTableQueryLanguage"
+rust-version = "1.79.0"
+readme = "README.md"
 
+[toolchain]
+channel = "1.65.0"
+components = ["rustfmt", "clippy"]
 
 [lib]
 crate-type = ["rlib", "dylib"]

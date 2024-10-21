@@ -53,9 +53,13 @@ pub fn check_syntax(query: String, columns: Vec<String>) -> Result<bool, JsValue
     }
 }
 
-
 #[wasm_bindgen(js_name = "fitl_filter")]
-pub fn fitl_filter(
+pub fn fitl_filter(query: String, input_table: JsValue) -> Result<JsValue, JsValue> {
+    fitl_filter_custom_table_format(query, input_table, "JSARRAY".to_string())
+}
+
+#[wasm_bindgen(js_name = "fitl_filter_custom_table_format")]
+pub fn fitl_filter_custom_table_format(
     query: String,
     input_table: JsValue,
     table_format: String,
@@ -86,7 +90,6 @@ pub fn fitl_filter(
         }
     };
 
-
     let table = match table_result {
         Ok(table) => table,
         Err(error) => {
@@ -98,7 +101,6 @@ pub fn fitl_filter(
     };
 
     let input_query = query.clone().trim().to_string();
-
 
     let compiled_query = match compile_query(&input_query, &table.get_column_names()) {
         Ok(result) => result,

@@ -35,7 +35,7 @@
 
   function submit() {
     try {
-      result_table = cleanMap(fitl_filter(query, example_table, "JSARRAY"));
+      result_table = cleanMap(fitl_filter(query, example_table));
     } catch (error) {
       if (error.name === "RuntimeError") {
         console.error("Runtime Error");
@@ -50,8 +50,8 @@
   function onQueryChange(event) {
     query = event.target.value;
     try {
-      //   let asdfawsdf = check_syntax(query, ["artist", "album", "title"]);
-      let temp = cleanMap(fitl_filter(query, example_table, "JSARRAY"));
+      //   let result = check_syntax(query, ["artist", "album", "title"]);
+      let temp = cleanMap(fitl_filter(query, example_table));
       result_table = temp;
 
       colorQueryBox(true);
