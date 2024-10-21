@@ -1,13 +1,23 @@
 {
-  "name": "fitl-wasm",
-  "version": "1.0.4",
-  "main": "./pkg/fitl_wasm.js",
-  "type": "module",
-  "scripts": {
-    "build": "wasm-pack build --target bundler"
-  },
-  "files": [
-    "*.wasm",
-    "*.js"
-  ]
+    "name": "fitl-wasm",
+    "version": "1.0.4",
+    "description": "Wasm wrapper for FiTL, specifically the fitl-rust crate.",
+    "author": {"name": "Slad3"},
+    "keywords": [
+        "wasm",
+        "query-language",
+        "tables",
+        "data filtering",
+        "wasm-bindgen"
+    ],
+    "main": "./pkg/fitl_wasm.js",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "wasm-pack build --target bundler"
+    },
+    "files": [
+        "*.wasm",
+        "*.js"
+    ]
 }

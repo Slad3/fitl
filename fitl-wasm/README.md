@@ -1,6 +1,6 @@
 # Fitl-WASM
 
-Wasm Wrapper for FiTL, specifically the fitl-rust crate.
+Wasm wrapper for FiTL, specifically the fitl-rust crate.
 
 For a full documentation/information about FiTL and how to write
 queries: [GitHub](https://github.com/Slad3/FilterTableQueryLanguage)
