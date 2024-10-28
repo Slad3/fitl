@@ -237,17 +237,40 @@ export function check_syntax(query, columns) {
 /**
 * @param {string} query
 * @param {any} input_table
+* @returns {any}
+*/
+export function fitl_filter(query, input_table) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passStringToWasm0(query, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.fitl_filter(retptr, ptr0, len0, addHeapObject(input_table));
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
+/**
+* @param {string} query
+* @param {any} input_table
 * @param {string} table_format
 * @returns {any}
 */
-export function fitl_filter(query, input_table, table_format) {
+export function fitl_filter_custom_table_format(query, input_table, table_format) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(query, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(table_format, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
-        wasm.fitl_filter(retptr, ptr0, len0, addHeapObject(input_table), ptr1, len1);
+        wasm.fitl_filter_custom_table_format(retptr, ptr0, len0, addHeapObject(input_table), ptr1, len1);
         var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
         var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
         var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);

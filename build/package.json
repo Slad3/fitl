@@ -5,7 +5,7 @@
     "Slad3"
   ],
   "description": "A WebAssembly package for the FilterTableQueryLanguage project.",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "license": "MIT",
   "files": [
     "fitl_wasm_bg.wasm",

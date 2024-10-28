@@ -14,10 +14,16 @@ export function check_syntax(query: string, columns: (string)[]): boolean;
 /**
 * @param {string} query
 * @param {any} input_table
+* @returns {any}
+*/
+export function fitl_filter(query: string, input_table: any): any;
+/**
+* @param {string} query
+* @param {any} input_table
 * @param {string} table_format
 * @returns {any}
 */
-export function fitl_filter(query: string, input_table: any, table_format: string): any;
+export function fitl_filter_custom_table_format(query: string, input_table: any, table_format: string): any;
 /**
 */
 export enum TableFormat {
@@ -31,7 +37,8 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly test_json_input: (a: number, b: number) => void;
   readonly check_syntax: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly fitl_filter: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly fitl_filter: (a: number, b: number, c: number, d: number) => void;
+  readonly fitl_filter_custom_table_format: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
