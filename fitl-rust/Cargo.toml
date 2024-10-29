@@ -12,7 +12,7 @@ rust-version = "1.79.0"
 readme = "README.md"
 
 [toolchain]
-channel = "1.65.0"
+channel = "stable"
 components = ["rustfmt", "clippy"]
 
 [lib]

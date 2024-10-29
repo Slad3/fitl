@@ -1,10 +1,7 @@
-use crate::data_structures::{
-    CompileError, ParenthesesMatch, TokenStack, CASE_SENS_VALUE, NEGATE_VALUE,
-};
-use std::ops::Add;
+use crate::data_structures::{CompileError, TokenStack, CASE_SENS_VALUE, NEGATE_VALUE};
 
 #[allow(dead_code)]
-fn check_parenthesis(input: &TokenStack) -> ParenthesesMatch {
+fn check_parenthesis(input: &TokenStack) -> Result<bool, CompileError> {
     let mut left: usize = 0;
     let mut right: usize = 0;
 
@@ -17,11 +14,17 @@ fn check_parenthesis(input: &TokenStack) -> ParenthesesMatch {
     }
 
     if left == right {
-        ParenthesesMatch::True
+        Ok(true)
     } else if left >= right {
-        ParenthesesMatch::TooManyLeft(left - right)
+        Err(CompileError::NoMatchingParenthesis(format!(
+            "{:?} too many '(' parentheses",
+            left - right
+        )))
     } else {
-        ParenthesesMatch::TooManyRight(right - left)
+        Err(CompileError::NoMatchingParenthesis(format!(
+            "{:?} too many ')' parentheses",
+            right - left
+        )))
     }
 }
 
@@ -30,27 +33,19 @@ fn combine_quotes(input_string: &str) -> Result<Vec<String>, CompileError> {
 
     let mut temp_input = input_string;
 
-    let mut first_index: Option<usize> = temp_input.find('"');
+    while let Some(first_index) = temp_input.find('"') {
+        let second_index = match temp_input[first_index + 1..].find('"') {
+            Some(value) => value,
+            None => return Err(CompileError::NoMatchingQuotes(temp_input.parse().unwrap())),
+        };
 
-    while first_index.is_some() {
-        let second_index = &temp_input[first_index.unwrap() + 1..].find('"');
-
-        if second_index.is_none() {
-            return Err(CompileError::NoMatchingQuotes(temp_input.parse().unwrap()));
-        }
-
-        let before = &temp_input[..first_index.unwrap()];
-
-        let token =
-            &temp_input[first_index.unwrap() + 1..first_index.unwrap() + 1 + second_index.unwrap()];
-
-        let after = &temp_input[first_index.unwrap() + second_index.unwrap() + 2..];
+        let before = &temp_input[..first_index];
+        let token = &temp_input[first_index + 1..first_index + 1 + second_index];
+        let after = &temp_input[first_index + second_index + 2..];
 
         result_vec.extend(tokenize_sub_string(before)?);
         result_vec.push(token.to_string());
         temp_input = after;
-
-        first_index = temp_input.find('"');
     }
 
     if !temp_input.is_empty() {
@@ -68,34 +63,24 @@ fn tokenize_sub_string(input_string: &str) -> Result<TokenStack, CompileError> {
 
     let split_string: Vec<&str> = input_string.split_whitespace().collect();
 
-    let mut start_index = None;
-    let mut in_quotes = false;
-
-    for (index, &value) in split_string.iter().enumerate() {
-        if value.starts_with('"') {
-            start_index = Some(index);
-            in_quotes = true;
-        }
-
+    for &value in split_string.iter() {
         let mut temp_value = value.to_string();
 
-        if !in_quotes {
-            loop {
-                match temp_value.chars().next().unwrap_or('a') {
-                    '(' => {
-                        result_list.push("(".to_string());
-                        temp_value.remove(0);
-                    }
-                    CASE_SENS_VALUE => {
-                        result_list.push(CASE_SENS_VALUE.to_string());
-                        temp_value.remove(0);
-                    }
-                    NEGATE_VALUE => {
-                        result_list.push(NEGATE_VALUE.to_string());
-                        temp_value.remove(0);
-                    }
-                    _ => break,
+        loop {
+            match temp_value.chars().next().unwrap_or('a') {
+                '(' => {
+                    result_list.push("(".to_string());
+                    temp_value.remove(0);
                 }
+                CASE_SENS_VALUE => {
+                    result_list.push(CASE_SENS_VALUE.to_string());
+                    temp_value.remove(0);
+                }
+                NEGATE_VALUE => {
+                    result_list.push(NEGATE_VALUE.to_string());
+                    temp_value.remove(0);
+                }
+                _ => break,
             }
         }
 
@@ -109,28 +94,9 @@ fn tokenize_sub_string(input_string: &str) -> Result<TokenStack, CompileError> {
 
         temp_value = temp_reversed.chars().rev().collect();
 
-        if in_quotes && temp_value.ends_with('"') {
-            let token: String;
+        result_list.push(temp_value);
 
-            if start_index.unwrap() == index {
-                token = temp_value[1..temp_value.len() - 1].to_string();
-            } else {
-                let temp = split_string[start_index.unwrap()..=index - 1]
-                    .join(" ")
-                    .add(" ")
-                    .add(&*temp_value)
-                    .clone();
-
-                token = temp[1..temp.len() - 1].to_string();
-            }
-
-            result_list.push(token);
-            in_quotes = false;
-        } else if !in_quotes {
-            result_list.push(temp_value);
-        }
-
-        if !reversed_stack.is_empty() && !in_quotes {
+        if !reversed_stack.is_empty() {
             result_list.extend(reversed_stack.iter().rev().cloned());
         }
     }
@@ -143,19 +109,7 @@ fn tokenize_sub_string(input_string: &str) -> Result<TokenStack, CompileError> {
 pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
     let tokens = combine_quotes(input_string)?;
 
-    match check_parenthesis(&tokens) {
-        ParenthesesMatch::TooManyLeft(amount) => {
-            return Err(CompileError::NoMatchingParenthesis(format!(
-                "{amount} too many '(' parentheses"
-            )))
-        }
-        ParenthesesMatch::TooManyRight(amount) => {
-            return Err(CompileError::NoMatchingParenthesis(format!(
-                "{amount} too many ')' parentheses"
-            )))
-        }
-        ParenthesesMatch::True => {}
-    }
+    check_parenthesis(&tokens)?;
 
     Ok(tokens)
 }
@@ -314,8 +268,7 @@ mod tests {
     fn test_tokenize_quotes_complex_success() {
         let input_query = r#"!!!!!!((artist = Pac) & (title !^= "Big Poppa"))"#;
         let tokens = combine_quotes(input_query);
-        tokens.unwrap();
-        // assert!(tokens.is_ok());
+        assert!(tokens.is_ok());
     }
 
     #[test]

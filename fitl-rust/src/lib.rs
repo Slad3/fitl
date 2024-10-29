@@ -57,10 +57,6 @@ pub fn filter(compiled_query: &InstructionStack, table: &Table) -> Result<Table,
 }
 
 pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError> {
-    // if input_string.is_empty() {
-    //     return Ok(table.clone());
-    // }
-
     let instruction_stack = match compile_query(input_string, &table.get_column_names()) {
         Ok(stack) => stack,
         Err(error) => return Err(FITLError::CompileError(error)),

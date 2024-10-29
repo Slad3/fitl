@@ -200,7 +200,6 @@ mod tests {
     fn test_table() {
         let table: Table = Table::from_json_array(&get_test_json_table()).unwrap();
 
-        let column = table.get_column_names().get(0).unwrap().clone();
-        println!("{column}")
+        let _ = table.get_column_names().get(0).unwrap().clone();
     }
 }

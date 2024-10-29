@@ -265,8 +265,6 @@ mod tests {
 
         let result = compile_tokens(input_query, &columns);
 
-        println!("{:?}", result);
-
         assert!(matches!(result, Err(CompileError::InvalidColumn(_))));
     }
 
@@ -280,9 +278,7 @@ mod tests {
             Err(error) => {
                 eprintln!("Error: {:?}", error);
             }
-            Ok(res) => {
-                println!("{}", res.len());
-            }
+            Ok(_) => {}
         }
     }
 

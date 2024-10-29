@@ -92,12 +92,6 @@ pub enum TableFormat {
     JsonArray,
 }
 
-pub enum ParenthesesMatch {
-    TooManyLeft(usize),
-    TooManyRight(usize),
-    True,
-}
-
 #[derive(Debug, PartialEq)]
 pub enum RuntimeError {
     InvalidOperation(String),
