@@ -6,7 +6,6 @@ authors = ["Slad3"]
 description = "A simple easy to learn and remember language used to filter down a table of data within a simple string."
 exclude = ["Prototype/"]
 homepage = "https://github.com/Slad3/FilterTableQueryLanguage"
-license = "MIT"
 license-file = "LICENSE"
 repository = "https://github.com/Slad3/FilterTableQueryLanguage"
 rust-version = "1.79.0"

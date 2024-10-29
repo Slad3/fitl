@@ -4,14 +4,14 @@ use crate::data_structures::{
 use std::ops::Add;
 
 #[allow(dead_code)]
-fn check_parenthesis(input_string: &str) -> ParenthesesMatch {
-    let mut left: u32 = 0;
-    let mut right: u32 = 0;
+fn check_parenthesis(input: &TokenStack) -> ParenthesesMatch {
+    let mut left: usize = 0;
+    let mut right: usize = 0;
 
-    for char in input_string.chars() {
-        match char {
-            '(' => left += 1,
-            ')' => right += 1,
+    for token in input {
+        match token.as_str() {
+            "(" => left += 1,
+            ")" => right += 1,
             _ => {}
         }
     }
@@ -19,32 +19,52 @@ fn check_parenthesis(input_string: &str) -> ParenthesesMatch {
     if left == right {
         ParenthesesMatch::True
     } else if left >= right {
-        ParenthesesMatch::TooManyLeft
+        ParenthesesMatch::TooManyLeft(left - right)
     } else {
-        ParenthesesMatch::TooManyRight
+        ParenthesesMatch::TooManyRight(right - left)
     }
 }
 
-pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
+fn combine_quotes(input_string: &str) -> Result<Vec<String>, CompileError> {
+    let mut result_vec: Vec<String> = Vec::new();
+
+    let mut temp_input = input_string;
+
+    let mut first_index: Option<usize> = temp_input.find('"');
+
+    while first_index.is_some() {
+        let second_index = &temp_input[first_index.unwrap() + 1..].find('"');
+
+        if second_index.is_none() {
+            return Err(CompileError::NoMatchingQuotes(temp_input.parse().unwrap()));
+        }
+
+        let before = &temp_input[..first_index.unwrap()];
+
+        let token =
+            &temp_input[first_index.unwrap() + 1..first_index.unwrap() + 1 + second_index.unwrap()];
+
+        let after = &temp_input[first_index.unwrap() + second_index.unwrap() + 2..];
+
+        result_vec.extend(tokenize_sub_string(before)?);
+        result_vec.push(token.to_string());
+        temp_input = after;
+
+        first_index = temp_input.find('"');
+    }
+
+    if !temp_input.is_empty() {
+        result_vec.extend(tokenize_sub_string(temp_input)?);
+    }
+
+    Ok(result_vec)
+}
+
+fn tokenize_sub_string(input_string: &str) -> Result<TokenStack, CompileError> {
     if input_string.is_empty() {
         return Ok(TokenStack::new());
     }
     let mut result_list: TokenStack = Vec::new();
-
-    // TODO fix check_parenthesis
-    // match check_parenthesis(input_string) {
-    //     ParenthesesMatch::TooManyLeft => {
-    //         return Err(CompileError::NoMatchingParenthesis(
-    //             "Too many '(' parentheses".to_string(),
-    //         ))
-    //     }
-    //     ParenthesesMatch::TooManyRight => {
-    //         return Err(CompileError::NoMatchingParenthesis(
-    //             "Too many ')' parentheses".to_string(),
-    //         ))
-    //     }
-    //     ParenthesesMatch::True => {}
-    // }
 
     let split_string: Vec<&str> = input_string.split_whitespace().collect();
 
@@ -118,6 +138,26 @@ pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
     result_list.retain(|s| !s.is_empty());
 
     Ok(result_list)
+}
+
+pub fn tokenize(input_string: &str) -> Result<TokenStack, CompileError> {
+    let tokens = combine_quotes(input_string)?;
+
+    match check_parenthesis(&tokens) {
+        ParenthesesMatch::TooManyLeft(amount) => {
+            return Err(CompileError::NoMatchingParenthesis(format!(
+                "{amount} too many '(' parentheses"
+            )))
+        }
+        ParenthesesMatch::TooManyRight(amount) => {
+            return Err(CompileError::NoMatchingParenthesis(format!(
+                "{amount} too many ')' parentheses"
+            )))
+        }
+        ParenthesesMatch::True => {}
+    }
+
+    Ok(tokens)
 }
 
 #[cfg(test)]
@@ -261,5 +301,28 @@ mod tests {
                 ")".to_string(),
             ]
         );
+    }
+
+    #[test]
+    fn test_tokenize_quotes_success() {
+        let input_query = r#"artist = "The Roots""#;
+        let tokens = combine_quotes(input_query).unwrap();
+        assert_eq!(tokens, vec!["artist", "=", "The Roots"])
+    }
+
+    #[test]
+    fn test_tokenize_quotes_complex_success() {
+        let input_query = r#"!!!!!!((artist = Pac) & (title !^= "Big Poppa"))"#;
+        let tokens = combine_quotes(input_query);
+        tokens.unwrap();
+        // assert!(tokens.is_ok());
+    }
+
+    #[test]
+    fn test_tokenize_quotes_complex_fail() {
+        let input_query = r#"!!!!!!((artist = Pac) & (title !^= "Big Poppa))"#;
+        let tokens = combine_quotes(input_query);
+
+        assert!(tokens.is_err());
     }
 }

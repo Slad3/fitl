@@ -93,8 +93,8 @@ pub enum TableFormat {
 }
 
 pub enum ParenthesesMatch {
-    TooManyLeft,
-    TooManyRight,
+    TooManyLeft(usize),
+    TooManyRight(usize),
     True,
 }
 
@@ -112,6 +112,7 @@ pub enum CompileError {
     InvalidToken(String),
     InvalidColumn(String),
     NoMatchingParenthesis(String),
+    NoMatchingQuotes(String),
     NoColumnsDetected,
     NotEnoughTokens(TokenStack),
     WTFIsThisInput(TokenStack),
