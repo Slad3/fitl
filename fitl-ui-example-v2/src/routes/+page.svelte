@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import FoodExample from '$lib/components/FoodExample.svelte';
-	import { foodData } from '$lib/data/foodData.js';
-	import DataTable from '$lib/components/DataTable.svelte';
 
 	import ExampleGif from '$lib/images/example.gif';
 	import SpotifySearchImage from '$lib/images/spotifySearchImage.jpg';
@@ -15,13 +13,21 @@
 		<img src={ExampleGif} alt="Example Query" />
 	</div>
 
+	<h2>What is FiTL?</h2>
 	<p>
-		Designed in mind for developers to wrap their search/filter box in a function and implement a
-		universal table filtering language into their application, FiTL allows end users to easily
-		filter down a singular table with column specific parameters. This leaves the overall guessing
-		when it comes to what search algorithms will include/exclude down to a minimum.
+		FiTL (Filter Table Language) is a simple query langauge allowing end users to quickly and
+		specifically filter rows from a table. Designed in mind for developers to wrap their
+		search/filter box in a function and implement a universal table filtering language into their
+		application, FiTL allows end users to easily filter down singular tables with column specific
+		parameters. This leaves the overall guessing and frustrations when it comes to what search
+		algorithms will include/exclude down to a minimum. With just a surface level knowledge of the
+		language, users are able to get . With just a more experience with the language, users are able
+		to filter down a table with precise parameters including and excluding exactly what they queried
+		for.
 	</p>
-	<p>Real world examples include:</p>
+	<h2>Why did I create FiTL?</h2>
+	<p>Because Spotify and Genius.com's search algorithm really freaking sucks.</p>
+	<h2>Real world potential examples include:</h2>
 	<ul class="space-y-1 list-outside list-disc">
 		<li>Music Playlists (IE: Spotify Liked songs or an already made playlist)</li>
 		<li>
@@ -33,7 +39,7 @@
 
 	<ul class="list-inside border-b border-white pb-5">
 		<li>
-			<h3>
+			<h2>
 				Learn more about how to write queries <a
 					href="{base}/queries"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -55,10 +61,10 @@
 						/>
 					</svg>
 				</a>
-			</h3>
+			</h2>
 		</li>
 		<li>
-			<h3>
+			<h2>
 				Check out an interactive example with example queries on
 				<a
 					href="{base}/playlist"
@@ -81,10 +87,10 @@
 						/>
 					</svg>
 				</a>
-			</h3>
+			</h2>
 		</li>
 		<li>
-			<h3>
+			<h2>
 				Written for Rust and JavaScript <a
 					href="https://github.com/Slad3/FilterTableQueryLanguage"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -106,7 +112,7 @@
 						/>
 					</svg>
 				</a>
-			</h3>
+			</h2>
 		</li>
 	</ul>
 
