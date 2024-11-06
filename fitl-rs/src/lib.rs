@@ -4,15 +4,17 @@ mod filter;
 // mod table;
 mod tokenize;
 
-pub mod table;
+mod table;
 
-use crate::table::Table;
+pub use crate::table::Table;
 use crate::tokenize::tokenize;
 
 use crate::compile::compile_tokens;
-use crate::data_structures::{FITLError, InstructionStack};
+
 use crate::filter::filter_table;
 use data_structures::CompileError;
+
+pub use crate::data_structures::{FITLError, InstructionStack};
 
 /// Pre-compiles query, gives specific compile errors for better query linting
 ///
@@ -43,7 +45,7 @@ pub fn compile_query(
 ///
 /// # Arguments
 ///
-/// * `compiled_query` - Compiled query from the 'compile_query' function
+/// * `compiled_query` - Compiled query from 'compile_query'
 /// * `table` - Table reference to create filtered table from
 ///
 /// # Returns
@@ -56,6 +58,16 @@ pub fn filter(compiled_query: &InstructionStack, table: &Table) -> Result<Table,
     }
 }
 
+/// Full Table Filters table from with an instruction stack input.
+///
+/// # Arguments
+///
+/// * `input_string` - Input query as an &str
+/// * `table` - Table reference to create filtered table from
+///
+/// # Returns
+///
+/// A filtered down version of the inputted Table
 pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError> {
     let instruction_stack = match compile_query(input_string, &table.get_column_names()) {
         Ok(stack) => stack,

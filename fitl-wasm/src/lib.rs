@@ -18,7 +18,7 @@ fn format_js_error(level: &str, details: &String) -> JsValue {
         "level": level,
         "details": details
     }}))
-        .unwrap()
+    .unwrap()
 }
 
 fn table_format_from_string(table_format_input: &String) -> Option<TableFormat> {

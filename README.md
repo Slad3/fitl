@@ -1,4 +1,4 @@
-# FiTL (Filter Table (Query) Language)
+# FiTL (Filter Table Language)
 
 ### Pronounced like "Fiddle"
 
