@@ -1,0 +1,1 @@
+import{a as t,t as s}from"../chunks/disclose-version.CT4FqHsS.js";import{s as e,c as m,r as p}from"../chunks/runtime.BF4ddQLO.js";import{F as i}from"../chunks/FoodExample.DCbU8dDU.js";var c=s('<article class="prose-gray prose-base text-white"><h1>Food Example</h1> <!></article>');function f(a){var r=c(),o=e(m(r),2);i(o,{}),p(r),t(a,r)}export{f as component};
