@@ -7,40 +7,16 @@
 </script>
 
 <article class="prose-gray prose-base text-white">
-	<div class="border-b border-white mb-10">
+	<div class=" border-white mb-10">
 		<h1>FiTL (Filter Table Language)</h1>
 		<h3>A simple language for filtering tables, because sometimes search algorithms just suck.</h3>
 		<img src={ExampleGif} alt="Example Query" />
 	</div>
 
-	<h2>What is FiTL?</h2>
-	<p>
-		FiTL (Filter Table Language) is a simple query langauge allowing end users to quickly and
-		specifically filter rows from a table. Designed in mind for developers to wrap their
-		search/filter box in a function and implement a universal table filtering language into their
-		application, FiTL allows end users to easily filter down singular tables with column specific
-		parameters. This leaves the overall guessing and frustrations when it comes to what search
-		algorithms will include/exclude down to a minimum. With just a surface level knowledge of the
-		language, users are able to get . With just a more experience with the language, users are able
-		to filter down a table with precise parameters including and excluding exactly what they queried
-		for.
-	</p>
-	<h2>Why did I create FiTL?</h2>
-	<p>Because Spotify and Genius.com's search algorithm really freaking sucks.</p>
-	<h2>Real world potential examples include:</h2>
-	<ul class="space-y-1 list-outside list-disc">
-		<li>Music Playlists (IE: Spotify Liked songs or an already made playlist)</li>
-		<li>
-			Search Page on Product pages (whether in blank search page or just filtering down search
-			results)
-		</li>
-		<li>Movie/Video search results (Netflix/Hulu/IMDB searching/filtering)</li>
-	</ul>
-
 	<ul class="list-inside border-b border-white pb-5">
 		<li>
 			<h2>
-				Learn more about how to write queries <a
+				Learn more about a
 					href="{base}/queries"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
 				>
@@ -91,7 +67,7 @@
 		</li>
 		<li>
 			<h2>
-				Written for Rust and JavaScript <a
+				Written for Rust, WASM and JavaScript <a
 					href="https://github.com/Slad3/FilterTableQueryLanguage"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
 				>
@@ -115,6 +91,31 @@
 			</h2>
 		</li>
 	</ul>
+
+	<h2>What is FiTL?</h2>
+	<p>
+		FiTL (Filter Table Language) is a simple query langauge allowing end users to quickly and
+		specifically filter rows from a table. Users filter rows from tables based on columns and
+		conditional statements for those columns. Multiple conditional statemens can be combined/chained
+		to allow for further specificity of table results. Designed to be easy to implement for
+		developers, easy to learn and remember for general users, but also allows room to master for
+		power users.
+	</p>
+	<h2>Why did I create FiTL?</h2>
+	<p>Because Spotify and Genius.com's search algorithm really freaking sucks.</p>
+	<h2>Real world potential implementations include:</h2>
+	<ul class="space-y-1 list-outside list-disc">
+		<li>Music Playlists (IE: Spotify Liked songs or an already made playlist)</li>
+		<li>
+			Search Page on Product pages (whether in blank search page or just filtering down search
+			results)
+		</li>
+		<li>Movie/Video search results (Netflix/Hulu/IMDB searching/filtering)</li>
+	</ul>
+
+	<div>
+		<h2>Why FiTL over</h2>
+	</div>
 
 	<div class="">
 		<h2>Advantages Over a General Search Algorithm</h2>

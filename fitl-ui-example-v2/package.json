@@ -13,7 +13,7 @@
 		"test": "npm run test:unit -- --run",
 		"lint": "eslint . && prettier --check .",
 		"format": "prettier --write .",
-        "deploy": "pnpm gh-pages -d build -t true"
+		"deploy": "pnpm gh-pages -d build -t true"
 	},
 	"files": [
 		"dist",
@@ -36,7 +36,7 @@
 		"svelte": "^5.0.0"
 	},
 	"dependencies": {
-		"fitl-wasm": "file:../../FilterTableQueryLanguage/fitl-wasm/pkg",
+		"fitl-wasm": "file:../fitl-wasm/pkg",
 		"svelte-icons": "^2.1.0",
 		"vite-plugin-top-level-await": "^1.4.4",
 		"vite-plugin-wasm": "^3.3.0"
@@ -73,5 +73,5 @@
 		"vite-plugin-wasm-pack": "^0.1.12",
 		"vitest": "^2.0.4"
 	},
-	"packageManager": "pnpm@8.15.6+sha1.8105075ad0aa306138be128c017e9c41e28ecffa"
+	"packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
 }
