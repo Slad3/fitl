@@ -3,8 +3,24 @@
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
 	import githubLogo from '$lib/images/icons/githubLogo.png';
+	import { onMount } from 'svelte';
 
-	// import MdDehaze from 'svelte-icons/md/MdDehaze.svelte';
+	const transformAttribute = 'transform-none';
+	let dropdownShown = true;
+	let drawerNav: HTMLElement;
+
+	onMount(() => {
+		drawerNav = document.getElementById('drawer-navigation')!;
+	});
+
+	function toggleSidebar() {
+		if (drawerNav.classList.contains(transformAttribute)) {
+			drawerNav.classList.remove(transformAttribute);
+		} else {
+			drawerNav.classList.add(transformAttribute);
+		}
+		return null;
+	}
 </script>
 
 <div class="antialiased bg-primary-background">
@@ -16,6 +32,7 @@
 					data-drawer-toggle="drawer-navigation"
 					aria-controls="drawer-navigation"
 					class="p-2 mr-2 text-gray-600 rounded-lg cursor-pointer md:hidden hover:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+					on:click={toggleSidebar}
 				>
 					<svg
 						aria-hidden="true"
@@ -57,7 +74,7 @@
 
 	<aside
 		class="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full md:translate-x-0 bg-secondary-background border-gray-800"
-		aria-label="Sidenav"
+		aria-label="drawer-navigation"
 		id="drawer-navigation"
 	>
 		<div class="overflow-y-auto py-5 px-3 h-full bg-secondary-background">
@@ -121,6 +138,9 @@
 						class="flex items-center p-2 w-full text-base font-medium rounded-lg transition duration-75 group text-white hover:bg-hover-accent"
 						aria-controls="dropdown-pages"
 						data-collapse-toggle="dropdown-pages"
+						on:click={() => {
+							dropdownShown = !dropdownShown;
+						}}
 					>
 						<svg
 							aria-hidden="true"
@@ -150,66 +170,94 @@
 							></path>
 						</svg>
 					</button>
-					<ul id="dropdown-pages" class="py-2 space-y-2">
-						<li aria-current={$page.url.pathname === '/playlist' ? 'page' : undefined}>
-							<a
-								href="{base}/playlist"
-								class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group dark:text-white hover:bg-hover-accent"
-							>
-								<svg
-									class="w-6 h-6 text-gray-800 dark:text-white"
-									aria-hidden="true"
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									fill="none"
-									viewBox="0 0 24 24"
+					{#if dropdownShown}
+						<ul id="dropdown-pages" class="py-2 space-y-2">
+							<li aria-current={$page.url.pathname === '/playlist' ? 'page' : undefined}>
+								<a
+									href="{base}/playlist"
+									class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group dark:text-white hover:bg-hover-accent"
 								>
-									<path
-										stroke="currentColor"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M17 15.5V5s3 1 3 4m-7-3H4m9 4H4m4 4H4m13 2.4c0 1.326-1.343 2.4-3 2.4s-3-1.075-3-2.4 1.343-2.4 3-2.4 3 1.075 3 2.4Z"
-									/>
-								</svg>
+									<svg
+										class="w-6 h-6 text-gray-800 dark:text-white"
+										aria-hidden="true"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="none"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke="currentColor"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M17 15.5V5s3 1 3 4m-7-3H4m9 4H4m4 4H4m13 2.4c0 1.326-1.343 2.4-3 2.4s-3-1.075-3-2.4 1.343-2.4 3-2.4 3 1.075 3 2.4Z"
+										/>
+									</svg>
 
-								<span class="ml-3">Playlist Filter</span></a
-							>
-						</li>
-						<li aria-current={$page.url.pathname === '/food' ? 'page' : undefined}>
-							<a
-								href="{base}/food"
-								class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group dark:text-white hover:bg-hover-accent"
-							>
-								<svg
-									class="w-6 h-6 text-gray-800 dark:text-white"
-									aria-hidden="true"
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									fill="none"
-									viewBox="0 0 24 24"
+									<span class="ml-3">Playlist Filter</span></a
 								>
-									<path
-										stroke="currentColor"
-										stroke-linecap="round"
-										stroke-width="2"
-										d="M4.37 7.657c2.063.528 2.396 2.806 3.202 3.87 1.07 1.413 2.075 1.228 3.192 2.644 1.805 2.289 1.312 5.705 1.312 6.705M20 15h-1a4 4 0 0 0-4 4v1M8.587 3.992c0 .822.112 1.886 1.515 2.58 1.402.693 2.918.351 2.918 2.334 0 .276 0 2.008 1.972 2.008 2.026.031 2.026-1.678 2.026-2.008 0-.65.527-.9 1.177-.9H20M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-									/>
-								</svg>
+							</li>
+							<li aria-current={$page.url.pathname === '/food' ? 'page' : undefined}>
+								<a
+									href="{base}/food"
+									class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group dark:text-white hover:bg-hover-accent"
+								>
+									<svg
+										class="w-6 h-6 text-gray-800 dark:text-white"
+										aria-hidden="true"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="none"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke="currentColor"
+											stroke-linecap="round"
+											stroke-width="2"
+											d="M4.37 7.657c2.063.528 2.396 2.806 3.202 3.87 1.07 1.413 2.075 1.228 3.192 2.644 1.805 2.289 1.312 5.705 1.312 6.705M20 15h-1a4 4 0 0 0-4 4v1M8.587 3.992c0 .822.112 1.886 1.515 2.58 1.402.693 2.918.351 2.918 2.334 0 .276 0 2.008 1.972 2.008 2.026.031 2.026-1.678 2.026-2.008 0-.65.527-.9 1.177-.9H20M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+										/>
+									</svg>
 
-								<span class="ml-3">Food Filter</span></a
-							>
-						</li>
-						<!-- <li>
+									<span class="ml-3">Food Filter</span></a
+								>
+							</li>
+							<!-- <li>
 							<a
 								href="/playlist"
 								class="flex items-center p-2 pl-11 w-full text-base font-medium rounded-lg transition duration-75 group text-white hover:bg-hover-accent"
 								>Product Page (Cars)</a
 							>
 						</li> -->
-					</ul>
+						</ul>
+					{/if}
+				</li>
+				<li>
+					<a
+						href="/about"
+						class="flex items-center p-2 text-base font-medium rounded-lg text-white hover:bg-hover-accent group"
+					>
+						<svg
+							class="w-6 h-6 text-gray-800 dark:text-white"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+							/>
+						</svg>
+
+						<span class="ml-3">About/Why FiTL</span>
+					</a>
 				</li>
 			</ul>
 			<!-- <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">

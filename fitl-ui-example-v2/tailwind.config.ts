@@ -3,35 +3,33 @@ import containerQueries from '@tailwindcss/container-queries';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
+import flowbitePlugin from 'flowbite/plugin.js';
 
 export default {
-    content: [
-        "./src/**/*.{html,js,svelte,ts}",
-        "./node_modules/flowbite/**/*.js"
-    ],
+    content: ['./src/**/*.{html,js,svelte,ts}',
+        './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'],
 
     plugins: [
+        flowbitePlugin,
         typography,
         forms,
         containerQueries,
         aspectRatio,
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        require('flowbite/plugin')
     ],
     darkMode: 'media',
     theme: {
         extend: {
             colors: {
                 'primary-background': "#212121",
-                'secondary-background': "#111111",               
+                'secondary-background': "#111111",
                 // 'table-header': "#666666",                
                 // 'table-header': "rgb(127 29 29)",              
-                'table-header': "#336699",              
-                'table-primary': "#333333",                
+                'table-header': "#336699",
+                'table-primary': "#333333",
                 'table-secondary': "#444444",
                 // 'hover-accent': "rgb(54 83 20)"         
                 // 'hover-accent': "rgb(127 29 29)"         
-                'hover-accent': "#336699"         
+                'hover-accent': "#336699"
 
             }
         },

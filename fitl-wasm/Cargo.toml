@@ -2,7 +2,7 @@
 name = "fitl-wasm"
 version = "1.0.6"
 authors = ["Slad3"]
-description = "A WebAssembly package for the FilterTableQueryLanguage project."
+description = "A WebAssembly package for the FilterTableLanguage project."
 edition = "2018"
 license = "MIT"
 keywords = [
