@@ -36,7 +36,8 @@
 		"svelte": "^5.0.0"
 	},
 	"dependencies": {
-		"fitl-wasm": "file:..\\fitl-wasm\\pkg",
+		"fitl-js": "file:..\\fitl-js",
+		"fitl-wasm": "file:..\\fitl-js\\fitl-wasm\\pkg",
 		"svelte-icons": "^2.1.0",
 		"vite-plugin-top-level-await": "^1.4.4",
 		"vite-plugin-wasm": "^3.3.0"

@@ -1,0 +1,44 @@
+{
+  "name": "fitl-js",
+  "version": "0.1.0",
+  "description": "My TypeScript Library",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "wasminstall": "wasmwrap --input .\\fitl-wasm\\pkg\\fitl_wasm_bg.wasm --output fitl-wasm.wasm.ts"
+  },
+  "keywords": [
+    "typescript",
+    "library"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/my-ts-library"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/my-ts-library/issues"
+  },
+  "homepage": "https://github.com/your-username/my-ts-library#readme",
+  "dependencies": {
+    "@assemblyscript/loader": "^0.27.31",
+    "vite-plugin-top-level-await": "^1.4.4",
+    "vite-plugin-wasm": "^3.3.0",
+    "wasmwrap": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}

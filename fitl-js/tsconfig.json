@@ -1,0 +1,25 @@
+{
+  "include": [
+        "./src/**/*",
+        "./fitl-wasm/pkg/*",
+        // "./fitl-wasm/pkg/*.js", // Include the library files
+        // "./fitl-wasm/pkg/*.wasm" // Include the library files
+    ],
+  "exclude": ["**/*.test.ts"],
+  "compilerOptions": {
+    "module": "ES6",
+    "target": "ES6",
+    "lib": ["dom", "esnext"],
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "./",
+    "paths": {
+      "fitl-wasm/*": ["libs/fitl-wasm/*"]
+    }
+  }
+}

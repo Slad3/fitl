@@ -2,7 +2,7 @@ mod utils;
 use wasm_bindgen::prelude::*;
 
 use fitl::data_structures::TableFormat;
-use fitl::table::Table;
+use fitl::Table;
 use fitl::{compile_query, filter};
 use serde_json::{json, Value};
 use serde_wasm_bindgen;

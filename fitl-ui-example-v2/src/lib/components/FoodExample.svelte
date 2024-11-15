@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import init, { fitl_filter } from 'fitl-wasm';
+	// import init, { fitl_filter } from 'fitl-wasm';
+	import { fitl_filter } from 'fitl-js';
 
 	import { foodData } from '$lib/data/foodData.ts';
 	import { cleanMap, printError } from '$lib/utils';
@@ -14,7 +15,7 @@
 	let order = ['name', 'category', 'color'];
 
 	onMount(async () => {
-		await init();
+		// await init();
 		result_table = foodData;
 		queryTextBox = document.getElementById('query');
 		filterButton = document.getElementById('submitButton')!;
@@ -25,17 +26,17 @@
 		queryTextBox.style.borderColor = input ? 'green' : 'red';
 	}
 
-	function onQueryChange(event: { target: any }) {
+	async function onQueryChange(event: { target: any }) {
 		query = event.target.value;
 		try {
-			let temp = cleanMap(fitl_filter(query, foodData));
+			let temp = await fitl_filter(query, foodData);
 			result_table = temp;
 
 			colorQueryBox(true);
 		} catch (error) {
 			colorQueryBox(false);
 			console.error(error);
-			// printError(cleanMap(error));
+			// printError(error);
 		}
 	}
 
