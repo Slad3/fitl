@@ -5,13 +5,7 @@
 
 	$: columns = data.length > 0 ? Object.keys(data[0]) : [];
 
-	$: if (data) {
-		console.log('Data has changed:', data);
-	}
-
-	onMount(() => {
-
-	});
+	onMount(() => {});
 </script>
 
 <table class="table">

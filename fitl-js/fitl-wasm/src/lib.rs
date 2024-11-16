@@ -34,7 +34,9 @@ type JSValueTable = Vec<Value>;
 pub fn test_json_input(input_table: JsValue) -> Result<JsValue, JsValue> {
     let table_value = match serde_wasm_bindgen::from_value::<JSValueTable>(input_table) {
         Ok(table_value) => table_value,
-        Err(error) => return Err(format_js_error("TableFormat", &format!("{:?}", error))),
+        Err(error) => {
+            return Err(format_js_error("TableFormat", &format!("{:?}", error)));
+        }
     };
 
     match serde_wasm_bindgen::to_value(&table_value) {
@@ -53,11 +55,6 @@ pub fn check_syntax(query: String, columns: Vec<String>) -> Result<bool, JsValue
     }
 }
 
-#[wasm_bindgen(js_name = "fitl_filter")]
-pub fn fitl_filter(query: String, input_table: JsValue) -> Result<JsValue, JsValue> {
-    fitl_filter_custom_table_format(query, input_table, "JSARRAY".to_string())
-}
-
 #[wasm_bindgen(js_name = "fitl_filter_custom_table_format")]
 pub fn fitl_filter_custom_table_format(
     query: String,
@@ -70,7 +67,7 @@ pub fn fitl_filter_custom_table_format(
             return Err(format_js_error(
                 "TableCreation",
                 &format!("InvalidTableFormat HERE {:?}", &table_format),
-            ))
+            ));
         }
     };
 
@@ -78,7 +75,9 @@ pub fn fitl_filter_custom_table_format(
         TableFormat::JsonArray => {
             let table_value = match serde_wasm_bindgen::from_value::<JSValueTable>(input_table) {
                 Ok(table_value) => table_value,
-                Err(error) => return Err(format_js_error("Table Format", &format!("{:?}", error))),
+                Err(error) => {
+                    return Err(format_js_error("Table Format", &format!("{:?}", error)));
+                }
             };
             Table::from_json_array(&table_value)
         }
@@ -86,7 +85,7 @@ pub fn fitl_filter_custom_table_format(
             return Err(format_js_error(
                 "TableCreation",
                 &format!("InvalidTableFormat {:?}", &table_format),
-            ))
+            ));
         }
     };
 
@@ -96,7 +95,7 @@ pub fn fitl_filter_custom_table_format(
             return Err(format_js_error(
                 "TableParsingError",
                 &format!("{:?}", error),
-            ))
+            ));
         }
     };
 
@@ -104,7 +103,9 @@ pub fn fitl_filter_custom_table_format(
 
     let compiled_query = match compile_query(&input_query, &table.get_column_names()) {
         Ok(result) => result,
-        Err(error) => return Err(format_js_error("CompileError", &format!("{:?}", error))),
+        Err(error) => {
+            return Err(format_js_error("CompileError", &format!("{:?}", error)));
+        }
     };
 
     match filter(&compiled_query, &table) {

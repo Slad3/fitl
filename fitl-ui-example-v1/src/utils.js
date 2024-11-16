@@ -1,7 +1,3 @@
-export function cleanMap(table) {
-    return table.map((map) => Object.fromEntries(map));
-}
-
 export function mapToObj(map) {
     const obj = Object.fromEntries(
         [...map].map(([key, value]) => [key, value instanceof Map ? mapToObj(value) : value])

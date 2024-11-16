@@ -19,10 +19,9 @@ const exampleTable = [
 
 describe('fitl_filter tests no options', () => {
     it('simple success', async () => {
-        const queryInput = "name =: steak"
+        const queryInput = "name =: apple & color = red"
         let result = await fitl_filter(queryInput, exampleTable)
-        console.log(result)
-        // expect(result).toEqual({ key1: 1, key2: 2, key3: 3 })
+        expect(result).toEqual([{ name: "apple", category: "fruit", color: "red" }])
     });
 
 });

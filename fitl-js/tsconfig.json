@@ -1,9 +1,7 @@
 {
   "include": [
         "./src/**/*",
-        "./fitl-wasm/pkg/*",
-        // "./fitl-wasm/pkg/*.js", // Include the library files
-        // "./fitl-wasm/pkg/*.wasm" // Include the library files
+        "./fitl-wasm/pkg/*"
     ],
   "exclude": ["**/*.test.ts"],
   "compilerOptions": {
@@ -16,7 +14,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "baseUrl": "./",
     "paths": {
       "fitl-wasm/*": ["libs/fitl-wasm/*"]

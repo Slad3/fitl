@@ -1,8 +1,4 @@
-export function cleanMap(table: Map<string, any>[]): Record<string, any>[] {
-    return table.map((map) => Object.fromEntries(map));
-}
-
-export function mapToObj(map: Map<string, any>): Record<string, any> {
+export function mapToObj(map: Map<string, unknown>): Record<string, unknown> {
     const obj = Object.fromEntries(
         [...map].map(([key, value]) => [key, value instanceof Map ? mapToObj(value) : value])
     );
@@ -17,9 +13,9 @@ export function capitalize(s: string | unknown[]): string {
     return String(s[0]).toUpperCase() + String(s).slice(1);
 }
 
-export function sort_columns(data: Array<{ [key: string]: unknown }>, column_order: string[]): string[] {
+export function sort_columns(data: Array<{ [key: string]: unknown }>, column_order?: string[]): string[] {
 
-    if (data.length <= 0) {
+    if (!data || data.length === 0) {
         return []
     }
     if (!column_order) {
