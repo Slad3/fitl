@@ -4,6 +4,10 @@ import { cleanMap, mapToObj } from './utils'
 
 let wasmInitialized = false;
 
+/**
+ * @typedef {Object} Options
+ * @property {string} tableFormat Specific format for inputted table. Default "JSARRAY"
+ */
 export type Options = {
     tableFormat?: string
 }
@@ -32,7 +36,13 @@ function parseOptions(inputOptions?: Options) {
 }
 
 
-
+/**
+ * 
+ * @param query Query String
+ * @param input_table Table to be inputted
+ * @param options Optional options for both table format and query options 
+ * @returns New table filtered in the same format as inputed original table
+ */
 export async function fitl_filter(query: string, input_table: any, options?: Options) {
     if (!wasmInitialized) await init(buffer)
 

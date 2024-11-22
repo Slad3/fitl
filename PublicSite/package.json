@@ -1,6 +1,7 @@
 {
-	"name": "fitl-ui-example",
+	"name": "fitl-public-site",
 	"version": "0.0.1",
+    "license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",

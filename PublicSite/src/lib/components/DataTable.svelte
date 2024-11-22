@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { capitalize, sort_columns } from '$lib/utils.ts';
+	//@ts-ignore
+	import { capitalize, sort_columns } from '$lib/utils';
 
 	export let data: Array<{ [key: string]: any }>;
 	export let order: string[] = [];
 
-	// $: columns = data.length > 0 ? Object.keys(data[0]) : [];
 	$: columns = sort_columns(data, order);
 </script>
 

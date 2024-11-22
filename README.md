@@ -4,6 +4,17 @@
 
 A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to implement, easy to write, but also easy to specify and detail.
 
+
+
+## Repo Directory
+```
+- fitl-rs // Base 
+- fitl-js // JS/TS Wrapper around fitl-wasm
+    - fitl-wasm // Web Assmebly interface for fitl. Compliles from fitl-wasm
+    
+```
+
+
 ## How does it differ from SQL?
 
 - Designed specifically to write quickly in the moment
