@@ -4,7 +4,6 @@ A simple easy to learn and remember language used to filter down a table of data
 
 [![fitl gif example](/PublicSite/src/lib/images/example.gif)](https://fitl.benbarcaskey.com)
 
-
 ## What Is Fitl?
 
 FiTL (Filter Table Language) is a simple query langauge allowing end users to quickly and specifically filter rows from a table. Users filter rows from tables based on columns and conditional statements for those columns. Multiple conditional statemens can be combined/chained to allow for further specificity of table results. Designed to be easy to implement for developers, easy to learn and remember for general users, but also allows room to master for power users.
@@ -20,7 +19,7 @@ FiTL (Filter Table Language) is a simple query langauge allowing end users to qu
 
 ## Repo Directory
 
-- [fitl-rs](/fitl-rs) Base interpreeter written in Rust
-- [fitl-js](/fitl-js/) JS/TS Wrapper around fitl-wasm
-  - [fitl-wasm](/fitl-js/fitl-wasm/) Web Assmebly interface for fitl. Compliles from fitl-rs
+- [fitl-rs](/fitl-rs) Core language compiler and runtime written in Rust
+- [fitl-js](/fitl-js/) JS/TS library wrapper around fitl-wasm and fitl-rs
+  - [fitl-wasm](/fitl-js/fitl-wasm/) Web Assmebly interface for fitl. Compliles from the fitl-rs library
 - [PlaygroundUI](/PlaygroundUI/) Simple Example Svelte App for UI testing, updates automatically with fitl-wasm compiles

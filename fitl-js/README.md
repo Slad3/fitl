@@ -8,6 +8,7 @@ queries: [GitHub](https://github.com/Slad3/FilterTableLanguage)
 ## Getting Started
 
 ### Installation
+
 ```bash
 npm install fitl-js
 pnpm install fitl-js

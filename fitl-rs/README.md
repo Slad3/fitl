@@ -42,7 +42,7 @@ T -> Generic Symbol (For below chart purposes only)
 
 ## NFA Schema
 
-```
+```text
 S [boolean] -> Op | Par | Neg | S BoolOp S
 
 Op [boolean] -> column ComparOp value | column CaseSens value | column NegSym value
@@ -71,6 +71,6 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 - Add chaining |/& statements ('artist =: roots | "Black Thought" | Prince')
 - Add more ways to create a table
 - Add build scripts for
-    - Standard Rust library
-    - WASM js library
-    - Compiled python library
+  - Standard Rust library
+  - WASM js library
+  - Compiled python library
