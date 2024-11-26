@@ -13,9 +13,9 @@ Requirements:
 ```bash
 cargo build
 
-cargo build --relase # For release build
+# Or
 
-cargo run
+cargo build --release
 ```
 
 ## Symbols Dictionary
