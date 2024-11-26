@@ -1,104 +1,26 @@
-# FiTL (Filter Table Language)
-
-### Pronounced like "Fiddle"
+# [FiTL (Filter Table Language)]("https://fitl.benbarcaskey.com/")
 
 A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to implement, easy to write, but also easy to specify and detail.
 
+[![fitl gif example](/PublicSite/src/lib/images/example.gif)](https://fitl.benbarcaskey.com)
 
+
+## What Is Fitl?
+
+FiTL (Filter Table Language) is a simple query langauge allowing end users to quickly and specifically filter rows from a table. Users filter rows from tables based on columns and conditional statements for those columns. Multiple conditional statemens can be combined/chained to allow for further specificity of table results. Designed to be easy to implement for developers, easy to learn and remember for general users, but also allows room to master for power users.
+
+## Why not just use SQL? (or a modified version of sql)
+
+- FiTL is designed to be easier to type in a simple text box, especially on mobile devices
+- SQL is easy enough to learn, but FiTL is made to be easy enough for people who touch grass
+- SQL allows for table joining while FiTl is limited to singular table interacitons
+- In general FiTL is meant for quickly filtering an existing table for end user use while SQL is meant for more reusable structured queries. Although neither is contrained to previously said purposes.
+
+## [Learn More on Writing Queries](https://fitl.benbarcaskey.com/queries)
 
 ## Repo Directory
-```
-- fitl-rs // Base 
-- fitl-js // JS/TS Wrapper around fitl-wasm
-    - fitl-wasm // Web Assmebly interface for fitl. Compliles from fitl-wasm
-    
-```
 
-
-## How does it differ from SQL?
-
-- Designed specifically to write quickly in the moment
-- Filters single tables only (no joining tables or referencing other tables)
-- Super easy for non-programmer people to learn, though deep enough to master and create complex and detailed queries
-- Easy to quickly write within a text box, even on mobile (looking at you regex)
-
-## Real World Examples of Where This Would Be Implemented
-
-- Spotify Playlist/Liked Songs Search Box
-    - Query example: ```artist = Outkast & album != Idlewild```
-- Product search pages
-    - Query example ```brand != Apple & (ram = 32GB | resolution = "2560x1440")```
-
-## Writing queries
-
-### For programmers: writing queries is similar to writing boolean conditionals
-
-### For people who touch grass:
-
-The simplest query is based on the base operation schema:
-
-```
-<column name> <comparison operation> <compared to value>  
-```
-
-For example
-
-```
-artist = Prince
-```
-
-From a data table (for example a song playlist), will only return the rows where the `artist`(<column>) is equal to
-`Prince`
-
-This can be expanded upon with a boolean operator to combine operations
-
-```
-artist = Prince & title = "When Doves Cry"
-```
-
-You can inverse this filter by an exclamation point (parentheses are recommended, but not required)
-
-```
-!(artist = Prince & title = "When Doves Cry")
-```
-
-Like in PEMDAS, Operations are executed from left to right. Parentheses, like in math, will prioritize operations in a
-specified order.
-
-```
-album = 1999 | (artist = Prince & title = "When Doves Cry")
-```
-
-Also on the topic of word odering: no, Yodaing is not allowed
-
-```
-Prince = artist // Will not work
-```
-
-A somewhat extreme example:
-
-```
-artist ^= 2Pac | artist =: pac | artist = Makaveli & (album =: theory or title =: "Ain't Hard 2 Find")
-```
-
-## Symbols Dictionary
-
-T -> Generic Symbol (For below chart purposes only)
-
-\<value> -> inputted value
-
-| Word           | Symbol    | Description                                                                                                      |
-|----------------|-----------|------------------------------------------------------------------------------------------------------------------|
-| not            | !T        | Negates Operation                                                                                                |
-| is / equals    | =         | Exact match                                                                                                      |
-| contains       | =:        | Left contains right (Nickolas Picklous =: Nick)                                                                  |
-| isin           | :=        | Right contains left (Nick := Nickolas Picklous)                                                                  |
-| lessthan       | <         | "Less than" comparison of numbers or of characters/strings based on ASCII value of characters                    |
-| morethan       | \>        | "greater than" comparison of numbers or of characters/strings based on ASCII value of characters                 |
-| lessthanequals | <=        | "Less than or equals" comparison of numbers or of characters/strings based on ASCII value of characters          |
-| morethan       | \>=       | "greater than or equals" comparison of numbers or of characters/strings based on ASCII value of characters       |
-| or             | \|        | Or boolean operation                                                                                             |
-| and            | &         | And boolean operation                                                                                            |
-| *Parenthesis*  | ()        | Prioritizes statements inside parenthesis                                                                        |
-| *NA*           | "<value>" | Combines multiple words into single string. Necessary for multi-worded tokens, optional for single worded tokens |
-| *NA*           | ^T        | Makes statement case sensitive queries are case insensitive by default                                           |
+- [fitl-rs](/fitl-rs) Base interpreeter written in Rust
+- [fitl-js](/fitl-js/) JS/TS Wrapper around fitl-wasm
+  - [fitl-wasm](/fitl-js/fitl-wasm/) Web Assmebly interface for fitl. Compliles from fitl-rs
+- [PlaygroundUI](/PlaygroundUI/) Simple Example Svelte App for UI testing, updates automatically with fitl-wasm compiles

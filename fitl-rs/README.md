@@ -1,6 +1,22 @@
-# FiTL (Filter Table Language)
+# fitl-rs
 
-Source and rust crate for FiTL
+Source language and Rust crate for FiTL. See [the base readme](../README.md) or [fitl.com](https://fitl.benbarcaskey.com) for a more general overview on the language
+
+Meant to be used as a standalone Rust library and core language for fitl, fitl-rs is also meant to be complilable for WebAssembly and Python (coming soon) with external wrapper libraries (see [fitl-js](/fitl-js/)).
+
+## Getting started
+
+Requirements:
+
+- Rust >= 1.8
+
+```bash
+cargo build
+
+cargo build --relase # For release build
+
+cargo run
+```
 
 ## Symbols Dictionary
 
@@ -52,10 +68,9 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 - Add "re" Comparison symbol for regex matching
 - Add "~" symbol for a soft match excluding any non-alphanumeric characters in matching
 - Add custom type structures for table columns
-- Add chaining |/& statements ('artist =: roots | "Black Thought" | "Prince"')
+- Add chaining |/& statements ('artist =: roots | "Black Thought" | Prince')
 - Add more ways to create a table
 - Add build scripts for
     - Standard Rust library
     - WASM js library
     - Compiled python library
-- Build and deploy simple frontend for easy public testing
