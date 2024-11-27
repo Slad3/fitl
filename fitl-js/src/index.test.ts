@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fitl_filter, Options } from './index'
+import { fitlFilter, Options } from './index'
 
 const exampleTable = [
     { name: "apple", category: "fruit", color: "red" },
@@ -17,10 +17,10 @@ const exampleTable = [
     { name: "bread", category: "carb", color: "brown" },
 ]
 
-describe('fitl_filter tests no options', () => {
+describe('fitlFilter tests no options', () => {
     it('simple success', async () => {
         const queryInput = "name =: apple & color = red"
-        let result = await fitl_filter(queryInput, exampleTable)
+        let result = await fitlFilter(queryInput, exampleTable)
         expect(result).toEqual([{ name: "apple", category: "fruit", color: "red" }])
     });
 

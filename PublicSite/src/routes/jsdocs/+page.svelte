@@ -1,37 +1,89 @@
 <script lang="ts">
+	import Prism from 'prismjs';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		Prism.highlightAll();
+	});
 </script>
 
 <article class="prose-gray prose-base text-white">
 	<h1>JavaScript/TypeScript Documentation</h1>
+	<a
+		href="https://www.npmjs.com/package/fitl-js"
+		class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
+	>
+		<h2>fitl-js is available on npm repositories</h2></a
+	>
 
-	<h2>Installation</h2>
-	<p>fitl-js is available on npm repositories</p>
-	<code> pnpm install fitl-js </code>
+	<pre class="codeblock language-bash"><code>
+{`npm install fitl-js`}
 
-	<h2>Hello World</h2>
+{'pnpm install fitl-js'}
+    </code></pre>
 
-	<div>
-		<h1>Example Code</h1>
-		<pre class="codeblock">
-            {`import { fitl_filter } from "fitl-js";
+	<h2>Getting Started</h2>
 
-            let tableData = [
-                { category: "meat" },
-                { category: "fruit" }
-            ];
+	<p>To filter a basic JavaScript array of objects:</p>
 
-            let query = "category = fruit";
+	<pre class="codeblock language-javascript"><code>
+{`import { fitlFilter } from "fitl-js";
 
-            async function main() {
-                try {
-                    let resultTable = await fitl_filter(query, tableData);
-                } catch (error: unknown) {
-                    console.error(error);
-                }
-            }
-            main();`}
-    </pre>
-	</div>
+let tableData = [
+    { category: "meat" },
+    { category: "fruit" }
+];
+
+let query = "category = fruit";
+
+async function main() {
+    try {
+        let resultTable = await fitlFilter(query, tableData);
+        console.log(resultTable);
+    } catch (error: unknown) {
+        console.error(error);
+    }
+}
+main();
+`}
+</code></pre>
+
+	<p>With everything installed correctly this outputs to a new table:</p>
+	<pre class="codeblock language-javascript"><code>
+{'[{category: "fruit"}]'}
+    </code></pre>
+
+	<p>
+		Options are optional of course, currently used to specify input/output table types with other
+		future options coming soon.
+	</p>
+
+	<pre class="codeblock language-javascript"><code>
+{`import  { fitlFilter, type Options } from 'fitl-js';
+
+let tableData = [
+    { category: "meat" },
+    { category: "fruit" }
+];
+
+let query = "category = fruit";
+
+let options: Options = { tableFormat: 'JSARRAY' };
+
+async function main(){
+    try {
+        let resultTable = await fitlFilter(query, tableData, options);
+    } catch (error: unknown) {
+        console.error(error);
+    }
+}
+main();`}
+    </code></pre>
+
+	<p>
+		Default tableFormat is JSARRAY, other table formats coming soon and will have to be specifically
+		defined in options
+	</p>
 </article>
 
 <style>
@@ -42,19 +94,10 @@
 	}
 
 	.codeblock {
-		background-color: black;
-		/* padding: 10px; */
-		/* padding-left: 20px; */
-		/* padding-right: 20px; */
-		border-radius: 7px;
-		color: whitesmoke;
-	}
-
-	h1,
-	h2,
-	h3 {
-		/* text-align: left; */
-		color: whitesmoke;
+		/* background-color: black; */
+		/* color: whitesmoke; */
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 
 	table {

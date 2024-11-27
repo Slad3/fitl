@@ -18,7 +18,7 @@ yarn install
 ### Hello World
 
 ```typescript
-import  { fitl_filter } from 'fitl-js';
+import  { fitlFilter } from 'fitl-js';
 
 let tableData = [
     { category: "meat" },
@@ -29,7 +29,7 @@ let query = "category = fruit";
 
 async function main(){
     try {
-        let resultTable = await fitl_filter(query, tableData);
+        let resultTable = await fitlFilter(query, tableData);
     } catch (error: unknown) {
         console.error(error);
     }
@@ -41,7 +41,7 @@ Options are optional of course, currently used to specify input/output table typ
 
 ```typescript
 
-import  { fitl_filter, type Options } from 'fitl-js';
+import  { fitlFilter, type Options } from 'fitl-js';
 
 let tableData = [
     { category: "meat" },
@@ -55,7 +55,7 @@ let options: Options = { tableFormat: 'JSARRAY' };
 
 async function main(){
     try {
-        let resultTable = await fitl_filter(query, tableData, options);
+        let resultTable = await fitlFilter(query, tableData, options);
     } catch (error: unknown) {
         console.error(error);
     }

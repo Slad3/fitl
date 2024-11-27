@@ -1,4 +1,5 @@
-import init, { fitl_filter_custom_table_format } from 'fitl-wasm'
+// import init, { fitl_filter_custom_table_format } from 'fitl-wasm'
+import init, { fitl_filter_custom_table_format } from '../fitl-wasm/pkg/'
 import { buffer } from "src/fitl-wasm.wasm"
 import { cleanMap, mapToObj } from './utils'
 
@@ -43,7 +44,7 @@ function parseOptions(inputOptions?: Options) {
  * @param options Optional options for both table format and query options 
  * @returns New table filtered in the same format as inputed original table
  */
-export async function fitl_filter(query: string, input_table: any, options?: Options) {
+export async function fitlFilter(query: string, input_table: any, options?: Options) {
     if (!wasmInitialized) await init(buffer)
 
     const inputOptions = parseOptions(options);

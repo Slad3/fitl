@@ -6,7 +6,8 @@
 	import { onMount } from 'svelte';
 
 	const transformAttribute = 'transform-none';
-	let dropdownShown = true;
+	let exampleDropdownShown = true;
+	let docsDropdownShown = true;
 	let drawerNav: HTMLElement;
 
 	onMount(() => {
@@ -139,7 +140,7 @@
 						aria-controls="dropdown-pages"
 						data-collapse-toggle="dropdown-pages"
 						on:click={() => {
-							dropdownShown = !dropdownShown;
+							exampleDropdownShown = !exampleDropdownShown;
 						}}
 					>
 						<svg
@@ -170,7 +171,7 @@
 							></path>
 						</svg>
 					</button>
-					{#if dropdownShown}
+					{#if exampleDropdownShown}
 						<ul id="dropdown-pages" class="py-2 space-y-2">
 							<li aria-current={$page.url.pathname === '/playlist' ? 'page' : undefined}>
 								<a
@@ -241,7 +242,7 @@
 						aria-controls="dropdown-pages"
 						data-collapse-toggle="dropdown-pages"
 						on:click={() => {
-							// dropdownShown = !dropdownShown;
+							docsDropdownShown = !docsDropdownShown;
 						}}
 					>
 						<svg
@@ -272,7 +273,7 @@
 							></path>
 						</svg>
 					</button>
-					{#if dropdownShown}
+					{#if docsDropdownShown}
 						<ul id="dropdown-pages" class="py-2 space-y-2">
 							<li aria-current={$page.url.pathname === '/jsdocs' ? 'page' : undefined}>
 								<a
@@ -296,7 +297,7 @@
 									<span class="ml-3">JS Docs</span></a
 								>
 							</li>
-							<li aria-current={$page.url.pathname === '/food' ? 'page' : undefined}>
+							<!-- <li aria-current={$page.url.pathname === '/food' ? 'page' : undefined}>
 								<a
 									href="{base}/food"
 									class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group dark:text-white hover:bg-hover-accent"
@@ -317,7 +318,7 @@
 
 									<span class="ml-3">Rust Docs</span></a
 								>
-							</li>
+							</li> -->
 						</ul>
 					{/if}
 				</li>

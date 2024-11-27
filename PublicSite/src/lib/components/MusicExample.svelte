@@ -5,7 +5,7 @@
 	import DataTable from '$lib/components/DataTable.svelte';
 	import { songsTable } from '$lib/data/musicData';
 
-	import { fitl_filter } from 'fitl-js';
+	import { fitlFilter } from 'fitl-js';
 
 	let queryTextBox: any;
 	let query = '';
@@ -23,7 +23,7 @@
 	async function onQueryChange(event: { target: any }) {
 		query = event.target.value;
 		try {
-			let temp = await fitl_filter(query, songsTable);
+			let temp = await fitlFilter(query, songsTable);
 			result_table = temp;
 
 			colorQueryBox(true);

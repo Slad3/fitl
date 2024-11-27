@@ -1,7 +1,7 @@
 {
 	"name": "fitl-public-site",
 	"version": "0.0.1",
-    "license": "MIT",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -38,7 +38,7 @@
 	},
 	"dependencies": {
 		"fitl-js": "file:..\\fitl-js",
-		"fitl-wasm": "file:..\\fitl-js\\fitl-wasm\\pkg",
+		"prismjs": "^1.29.0",
 		"svelte-icons": "^2.1.0",
 		"vite-plugin-top-level-await": "^1.4.4",
 		"vite-plugin-wasm": "^3.3.0"

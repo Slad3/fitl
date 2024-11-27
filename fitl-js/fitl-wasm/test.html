@@ -8,48 +8,48 @@
 </head>
 
 <body>
-<h1 id="greeting"></h1>
-<script type="module">
-    import init, {test_json_input, fitl_filter} from "./pkg/fitl_wasm.js";
+    <h1 id="greeting"></h1>
+    <script type="module">
+        import init, { test_json_input, fitl_filter } from "./pkg/fitl_wasm.js";
 
 
-    async function run() {
-        await init();
-        try {
+        async function run() {
+            await init();
+            try {
 
-            let table = [
-                {"artist": "2Pac", "album": "Me Against the World", "title": "So Many Tears"},
-                {"artist": "2Pac", "album": "Me Against the World", "title": "Lord Knows"},
-                {"artist": "2Pac", "album": "All Eyez on Me", "title": "All Eyez on Me"},
-                {"artist": "2Pac", "album": "All Eyez on Me", "title": "2 Of Amerikaz Most Wanted"},
-                {"artist": "2Pac", "album": "All Eyez on Me", "title": "Heartz of Men"},
-                {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Toss It Up"},
-                {
-                    "artist": "Makaveli",
-                    "album": "The Don Killuminati: The 7 Day Theory",
-                    "title": "Me And My Girlfriend"
-                },
-                {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds"},
-            ]
+                let table = [
+                    { "artist": "2Pac", "album": "Me Against the World", "title": "So Many Tears" },
+                    { "artist": "2Pac", "album": "Me Against the World", "title": "Lord Knows" },
+                    { "artist": "2Pac", "album": "All Eyez on Me", "title": "All Eyez on Me" },
+                    { "artist": "2Pac", "album": "All Eyez on Me", "title": "2 Of Amerikaz Most Wanted" },
+                    { "artist": "2Pac", "album": "All Eyez on Me", "title": "Heartz of Men" },
+                    { "artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Toss It Up" },
+                    {
+                        "artist": "Makaveli",
+                        "album": "The Don Killuminati: The 7 Day Theory",
+                        "title": "Me And My Girlfriend"
+                    },
+                    { "artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds" },
+                ]
 
-            console.log(test_json_input([
-                {"asdfa": 9},
-                {"asdfa": "asdfasdf"},
-            ]))
+                console.log(test_json_input([
+                    { "asdfa": 9 },
+                    { "asdfa": "asdfasdf" },
+                ]))
 
-            console.log(fitl_filter(`artist =: Pac & album = "Me Against the World"`, table, "JSARRAY"))
+                console.log(fitlFilter(`artist =: Pac & album = "Me Against the World"`, table, "JSARRAY"))
 
 
-        } catch (error) {
-            console.error(error)
+            } catch (error) {
+                console.error(error)
+            }
         }
-    }
 
-    //
-    run();
+        //
+        run();
 
 
-</script>
+    </script>
 </body>
 
 </html>

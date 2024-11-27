@@ -2,7 +2,7 @@
 	import '$lib/stylesheets/fitlExamples.css';
 	import { onMount } from 'svelte';
 
-	import { fitl_filter } from 'fitl-js';
+	import { fitlFilter } from 'fitl-js';
 
 	import { foodData } from '$lib/data/foodData';
 	import DataTable from '$lib/components/DataTable.svelte';
@@ -24,7 +24,7 @@
 	async function onQueryChange(event: { target: any }) {
 		query = event.target.value;
 		try {
-			let temp = await fitl_filter(query, foodData);
+			let temp = await fitlFilter(query, foodData);
 			result_table = temp;
 
 			colorQueryBox(true);
