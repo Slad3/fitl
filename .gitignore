@@ -1,6 +1,8 @@
 .idea
 target/
-filt/Prototype/Python/.venv/*
-filt/Prototype/Python/.venv/**
+fitl-rs/Prototype/Python/.venv/*
+fitl-rs/Prototype/Python/.venv/**
+
+fitl-js/src/fitl-wasm.wasm.ts
 
 *.pyc
