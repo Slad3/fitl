@@ -3,7 +3,7 @@ name: Update Version
 on:
   push:
     paths:
-      - '.version' # Trigger when the .version file is updated
+      - '.version'
 
 jobs:
   update-version:
@@ -39,3 +39,11 @@ jobs:
           git add fitl-js/package.json fitl-js/fitl-wasm/Cargo.toml fitl-rs/Cargo.toml
           git commit -m "Update version to $VERSION"
           git push
+
+      - name: Publish fitl-js to npm
+        working-directory: fitl-js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          pnpm install
+          pnpm publish
