@@ -1,6 +1,6 @@
 [package]
 name = "fitl"
-version = "0.1.89"
+version = "0.1.93"
 edition = "2021"
 authors = ["Slad3"]
 description = "A simple easy to learn and remember language used to filter down a table of data within a simple string."
