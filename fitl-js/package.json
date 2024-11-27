@@ -1,6 +1,6 @@
 {
   "name": "fitl-js",
-  "version": "0.1.88",
+  "version": "0.1.89",
   "description": "FiTL TypeScript/JavaScript Library",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
