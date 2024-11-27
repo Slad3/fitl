@@ -1,6 +1,6 @@
 [package]
 name = "fitl-wasm"
-version = "0.1.87"
+version = "0.1.88"
 authors = ["Slad3"]
 description = "A WebAssembly package for the FilterTableLanguage project."
 edition = "2018"
