@@ -1,0 +1,41 @@
+name: Update Version
+
+on:
+  push:
+    paths:
+      - '.version' # Trigger when the .version file is updated
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Read version from .version
+        id: read_version
+        run: echo "VERSION=$(cat .version)" >> $GITHUB_ENV
+
+      - name: Update fitl-js/package.json
+        run: |
+          jq ".version = \"$VERSION\"" fitl-js/package.json > fitl-js/package.json.tmp
+          mv fitl-js/package.json.tmp fitl-js/package.json
+
+      - name: Update fitl-js/fitl-wasm/Cargo.toml
+        run: |
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" fitl-js/fitl-wasm/Cargo.toml
+
+      - name: Update fitl-rs/Cargo.toml
+        run: |
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" fitl-rs/Cargo.toml
+
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fitl-js/package.json fitl-js/fitl-wasm/Cargo.toml fitl-rs/Cargo.toml
+          git commit -m "Update version to $VERSION"
+          git push

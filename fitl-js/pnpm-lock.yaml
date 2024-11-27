@@ -11,9 +11,6 @@ importers:
       '@assemblyscript/loader':
         specifier: ^0.27.31
         version: 0.27.31
-      fitl-wasm:
-        specifier: file:fitl-wasm\pkg
-        version: file:fitl-wasm/pkg
       vite-plugin-top-level-await:
         specifier: ^1.4.4
         version: 1.4.4(rollup@4.26.0)(vite@5.4.11(@types/node@22.9.0))
@@ -697,9 +694,6 @@ packages:
   find-up@4.1.0:
     resolution: {integrity: sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==}
     engines: {node: '>=8'}
-
-  fitl-wasm@file:fitl-wasm/pkg:
-    resolution: {directory: fitl-wasm/pkg, type: directory}
 
   foreground-child@3.3.0:
     resolution: {integrity: sha512-Ld2g8rrAyMYFXBhEqMz8ZAHBi4J4uS1i/CxGMDnjyFWddMXLVcDp051DZfu+t7+ab7Wv6SMqpWmyFIj5UbfFvg==}
@@ -1607,8 +1601,6 @@ snapshots:
     dependencies:
       locate-path: 5.0.0
       path-exists: 4.0.0
-
-  fitl-wasm@file:fitl-wasm/pkg: {}
 
   foreground-child@3.3.0:
     dependencies:
