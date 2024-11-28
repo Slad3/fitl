@@ -1,1 +1,0 @@
-import{w as t,$ as r,v as u,x as c}from"./runtime.BvuXfmTb.js";function e(o){throw new Error("lifecycle_outside_component")}function l(o){t===null&&e(),r&&t.l!==null?a(t).m.push(o):u(()=>{const n=c(o);if(typeof n=="function")return n})}function a(o){var n=o.l;return n.u??(n.u={a:[],b:[],m:[]})}export{l as o};
