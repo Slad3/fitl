@@ -50,7 +50,7 @@ main();
 
 	<p>With everything installed correctly this outputs to a new table:</p>
 	<pre class="codeblock language-javascript"><code>
-{'[{category: "fruit"}]'}
+{'> [{category: "fruit"}]'}
     </code></pre>
 
 	<p>
@@ -88,13 +88,11 @@ main();`}
 
 <style>
 	article {
-		margin-left: 10%;
 		width: 80%;
-		margin-right: 10%;
 	}
 
 	.codeblock {
-		/* background-color: black; */
+		background-color: black;
 		/* color: whitesmoke; */
 		padding-top: 0;
 		padding-bottom: 0;

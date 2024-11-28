@@ -12,7 +12,6 @@ queries: [GitHub](https://github.com/Slad3/FilterTableLanguage)
 ```bash
 npm install fitl-js
 pnpm install fitl-js
-yarn install
 ```
 
 ### Hello World
