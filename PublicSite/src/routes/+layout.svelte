@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
 	import githubLogo from '$lib/images/icons/githubLogo.png';
+	import fitlLogo from '$lib/images/icons/favicon-32x32.png';
 	import { onMount } from 'svelte';
 
 	const transformAttribute = 'transform-none';
@@ -64,8 +65,9 @@
 					<span class="sr-only">Toggle sidebar</span>
 				</button>
 				<a href="https://fitl.benbarcaskey.com" class="flex items-center justify-between mr-4">
+					<img src={fitlLogo} alt="" class="h-10 w-10 mr-3" />
 					<span class="self-center text-2xl font-semibold whitespace-nowrap text-white text-center"
-						>FiTL (Filter Table Language)</span
+						>Filter Table Language</span
 					>
 				</a>
 			</div>

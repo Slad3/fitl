@@ -96,7 +96,6 @@ main();`}
 		padding-bottom: 0;
 	}
 
-
 	@media (max-width: 1280px) {
 		article {
 			margin-left: 0px;
