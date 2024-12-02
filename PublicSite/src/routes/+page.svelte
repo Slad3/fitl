@@ -16,7 +16,10 @@
 	<div class=" border-white mb-10">
 		<h1>FiTL (Filter Table Language)</h1>
 		<h3>A simple language for filtering tables, because sometimes search algorithms just suck.</h3>
-		<img src={ExampleGif} alt="Example Query" />
+		<!-- <a href="{base}/food"> -->
+		<a href="#whyNotSQL">
+			<img src={ExampleGif} alt="Example Query" />
+		</a>
 	</div>
 
 	<ul class="list-inside border-b border-white pb-5">
@@ -74,20 +77,38 @@
 		</li>
 		<li>
 			<h2>
-				Rust and JavaScript Docs <a
+				JavaScript (fitl-js)
+				<a
+					href="{base}/jsdocs"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
 				>
-					Coming Soon
+					Installation and getting started
+					<svg
+						class="w-4 h-4 ms-2 rtl:rotate-180"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 14 10"
+					>
+						<path
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M1 5h12m0 0L9 1m4 4L9 9"
+						/>
+					</svg>
 				</a>
 			</h2>
 		</li>
+
 		<li>
 			<h2>
-				Written for Rust, WASM and JavaScript <a
+				Written for Rust and JavaScript <a
 					href="https://github.com/Slad3/FilterTableLanguage"
 					class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
 				>
-					Check out the source on GitHub
+					Check out source code on GitHub
 					<svg
 						class="w-4 h-4 ms-2 rtl:rotate-180"
 						aria-hidden="true"
@@ -152,7 +173,7 @@
 		<li>Movie/Video search results (Netflix/Hulu/IMDB searching/filtering)</li>
 	</ul>
 
-	<div class="">
+	<div id="whyNotSQL">
 		<h2>Why not just use SQL? (or a modified version of sql)</h2>
 
 		<ul class=" space-y-1 list-disc list-outside">

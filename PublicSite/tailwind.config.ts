@@ -21,14 +21,10 @@ export default {
         extend: {
             colors: {
                 'primary-background': "#212121",
-                'secondary-background': "#111111",
-                // 'table-header': "#666666",                
-                // 'table-header': "rgb(127 29 29)",              
+                'secondary-background': "#111111",         
                 'table-header': "#336699",
                 'table-primary': "#333333",
-                'table-secondary': "#444444",
-                // 'hover-accent': "rgb(54 83 20)"         
-                // 'hover-accent': "rgb(127 29 29)"         
+                'table-secondary': "#444444",       
                 'hover-accent': "#336699"
 
             }

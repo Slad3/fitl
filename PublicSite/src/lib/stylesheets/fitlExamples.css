@@ -7,6 +7,22 @@
 		--gray: #9b9b9b;
 	}
 
+    .examples{
+        border: 1px whitesmoke dashed;
+        border-radius: 7px;
+        padding: 5px;
+        margin: 0px;
+    }
+
+    .examplesTitle {
+        margin: 0px;
+        padding: 0px;
+        text-align: left;
+        padding-left: 5%;
+
+        
+    }
+
 	.form__group {
 		position: relative;
 		padding: 15px 0 0;

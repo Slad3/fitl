@@ -92,31 +92,10 @@ main();`}
 	}
 
 	.codeblock {
-		background-color: black;
-		/* color: whitesmoke; */
 		padding-top: 0;
 		padding-bottom: 0;
 	}
 
-	table {
-		border-collapse: collapse;
-		overflow: hidden;
-		font-size: 0.85rem;
-		color: white;
-	}
-
-	th,
-	td {
-		padding: 10px;
-		background-color: rgb(26, 26, 26);
-		color: whitesmoke;
-		border: 1px black solid;
-		border-bottom: 1px whitesmoke solid;
-	}
-
-	/* th {
-		text-align: center;
-	} */
 
 	@media (max-width: 1280px) {
 		article {

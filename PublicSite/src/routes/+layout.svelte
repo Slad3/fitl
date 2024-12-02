@@ -294,7 +294,7 @@
 										></path>
 									</svg>
 
-									<span class="ml-3">JS Docs</span></a
+									<span class="ml-3">JS Getting Started</span></a
 								>
 							</li>
 							<!-- <li aria-current={$page.url.pathname === '/food' ? 'page' : undefined}>

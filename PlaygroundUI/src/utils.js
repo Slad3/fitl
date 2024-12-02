@@ -9,3 +9,7 @@ export function printError(error) {
     let temp = `${error.error.level}: ${error.error.details}`
     console.error(temp);
 }
+
+export function cleanMap(table) {
+    return table.map((map) => Object.fromEntries(map));
+}

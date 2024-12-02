@@ -49,7 +49,7 @@
 	}
 </script>
 
-<main>
+<article>
 	<span class="form__group field">
 		<input
 			type="text"
@@ -65,20 +65,23 @@
 	</span>
 	<br />
 	<br />
-	<button class="filter_button example_button" on:click={example1}>All Erykah Badu Songs</button>
-	<button class="filter_button example_button" on:click={example2}>All Albums with "the"</button>
-	<button class="filter_button example_button" on:click={example3}>All Black Thought Songs</button>
-	<br />
+	<div class="examples">
+		<p class="examplesTitle">Example Queries</p>
+		<button class="filter_button example_button" on:click={example1}>All Erykah Badu Songs</button>
+		<button class="filter_button example_button" on:click={example2}>All Albums with "the"</button>
+		<button class="filter_button example_button" on:click={example3}>All Black Thought Songs</button
+		>
+	</div>
 	<span id="tableInfo">
 		<div class="tableSizeInfo">
 			Current Table Length: {result_table.length} | Original Table Length: {songsTable.length}
 		</div></span
 	>
 	<DataTable data={result_table} order={['title', 'artist', 'album']}></DataTable>
-</main>
+</article>
 
 <style>
-	main {
+	article {
 		text-align: center;
 		padding: 1em;
 		width: 100%;
