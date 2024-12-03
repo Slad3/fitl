@@ -5,6 +5,7 @@ mod filter;
 mod tokenize;
 
 mod table;
+mod value_parsers;
 
 pub use crate::table::Table;
 use crate::tokenize::tokenize;

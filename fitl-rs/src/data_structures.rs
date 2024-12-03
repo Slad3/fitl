@@ -21,7 +21,7 @@ pub enum BooleanComparisonOperator {
 pub struct Operation {
     pub column: String,
     pub operation: ComparisonOperator,
-    pub value: String,
+    pub value: String, // TODO Update this to a dynamic type in accordance to ColumnType
     pub negated: bool,
     pub case_sensitive: bool,
 }
@@ -99,7 +99,15 @@ pub enum RuntimeError {
 }
 
 #[derive(Debug, Clone)]
-pub enum TableParsingError {}
+pub enum ColumnParsingError {
+    ColumnNotFound(String),
+}
+
+#[derive(Debug, Clone)]
+pub enum TableParsingError {
+    ColumnParsingError(ColumnParsingError),
+    ParseError(String),
+}
 
 #[derive(Debug, PartialEq)]
 pub enum CompileError {

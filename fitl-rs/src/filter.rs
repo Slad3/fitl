@@ -3,32 +3,40 @@ use crate::data_structures::{
     RuntimeError,
 };
 
-use crate::table::{Row, Table};
+use crate::table::{ColumnType, Row, Table};
 
 fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
     let mut operation_value = operation.value.clone();
-    let mut row_value = match row.get(&operation.column) {
+    let row_value = match row.get(&operation.column) {
         None => {
             return Err(RuntimeError::InvalidColumn(
                 format!("Invalid Operation: {}", &operation.column).to_string(),
             ))
         }
-        Some(value) => value.clone(),
+        Some(value) => value,
     };
 
-    if !operation.case_sensitive {
-        operation_value = operation_value.to_lowercase();
-        row_value = row_value.to_lowercase();
-    }
+    let row_value_string = match row_value {
+        ColumnType::String(row_val) => {
+            if !operation.case_sensitive {
+                operation_value = operation_value.to_lowercase();
+                row_val.to_lowercase()
+            } else {
+                row_val.clone()
+            }
+        }
+        ColumnType::Number(row_value) => row_value.to_string(),
+        ColumnType::DateTime(row_value) => row_value.clone(),
+    };
 
     let result = match operation.operation {
-        ComparisonOperator::Equals => operation_value == row_value,
-        ComparisonOperator::Contains => row_value.contains(&operation_value),
-        ComparisonOperator::IsIn => operation_value.contains(&row_value),
-        ComparisonOperator::LessThan => row_value < operation_value,
-        ComparisonOperator::LessThanEquals => row_value <= operation_value,
-        ComparisonOperator::MoreThan => row_value > operation_value,
-        ComparisonOperator::MoreThanEquals => row_value >= operation_value,
+        ComparisonOperator::Equals => operation_value == *row_value_string,
+        ComparisonOperator::Contains => row_value_string.contains(&operation_value),
+        ComparisonOperator::IsIn => operation_value.contains(&row_value_string),
+        ComparisonOperator::LessThan => row_value_string < operation_value,
+        ComparisonOperator::LessThanEquals => row_value_string <= operation_value,
+        ComparisonOperator::MoreThan => row_value_string > operation_value,
+        ComparisonOperator::MoreThanEquals => row_value_string >= operation_value,
     };
 
     if operation.negated {
