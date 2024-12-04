@@ -1,5 +1,5 @@
 use crate::data_structures::{ColumnParsingError, TableFormat, TableParsingError};
-use crate::value_parsers::parse_string_to_number;
+use crate::value_parsers::{parse_string_to_bool, parse_string_to_number};
 use serde_json::{Map, Value};
 use std::cmp::PartialEq;
 use std::collections::HashMap;
@@ -11,13 +11,18 @@ pub type Columns = HashMap<String, Vec<ColumnType>>;
 pub enum ColumnType {
     String(Option<String>),
     Number(Option<f32>),
+    Bool(Option<bool>),
 }
 
 impl ColumnType {
     pub fn to_string(&self) -> String {
         match self {
-            ColumnType::String(s) => s.clone().unwrap_or("null".to_string()),
-            ColumnType::Number(s) => match s.clone() {
+            ColumnType::String(val) => val.clone().unwrap_or("null".to_string()),
+            ColumnType::Number(val) => match val.clone() {
+                Some(n) => n.to_string(),
+                None => "null".to_string(),
+            },
+            ColumnType::Bool(val) => match val.clone() {
                 Some(n) => n.to_string(),
                 None => "null".to_string(),
             },
@@ -26,11 +31,15 @@ impl ColumnType {
 
     pub fn to_value(&self) -> Option<String> {
         match self {
-            ColumnType::String(s) => match s.clone() {
+            ColumnType::String(val) => match val.clone() {
                 Some(n) => Some(n),
                 None => None,
             },
-            ColumnType::Number(s) => match s.clone() {
+            ColumnType::Number(val) => match val.clone() {
+                Some(n) => Some(n.to_string()),
+                None => None,
+            },
+            ColumnType::Bool(val) => match val.clone() {
                 Some(n) => Some(n.to_string()),
                 None => None,
             },
@@ -60,10 +69,17 @@ impl Table {
         for json_row in input_json_array.iter() {
             for (key, value) in json_row.as_object().expect("Unable to unwrap Value").iter() {
                 let column_array = result_hash.entry(key.clone()).or_insert_with(Vec::new);
-                column_array.push(ColumnType::String(match value.as_str() {
-                    Some(s) => Some(s.to_string()),
-                    None => None,
-                }));
+
+                let result: ColumnType = match value {
+                    Value::Null => ColumnType::String(None),
+                    Value::String(val) => ColumnType::String(Some(val.to_string())),
+                    Value::Number(val) => ColumnType::String(Some(val.to_string())),
+                    Value::Array(val) => ColumnType::String(Some(format!("{:?}", val))),
+                    Value::Object(val) => ColumnType::String(Some(format!("{:?}", val))),
+                    Value::Bool(val) => ColumnType::String(Some(val.to_string())),
+                };
+
+                column_array.push(result);
             }
         }
 
@@ -119,13 +135,22 @@ impl Table {
     }
 
     pub fn get_column_names(&self) -> Vec<String> {
-        self.columns.keys().cloned().collect()
+        let mut column_names: Vec<String> = self.columns.keys().cloned().collect();
+        column_names.sort();
+        column_names
     }
 
     pub fn get_column_types(&self) -> Vec<ColumnType> {
-        self.columns
-            .values()
-            .filter_map(|column_values| column_values.get(0).cloned())
+        let mut column_names: Vec<String> = self.columns.keys().cloned().collect();
+        column_names.sort();
+
+        column_names
+            .iter()
+            .filter_map(|name| {
+                self.columns
+                    .get(name)
+                    .and_then(|column_values| column_values.get(0).cloned())
+            })
             .collect()
     }
 
@@ -161,6 +186,13 @@ impl Table {
                     ColumnType::String(_) => {
                         new_column.push(ColumnType::String(column_value.clone()))
                     }
+                    ColumnType::Bool(_) => new_column.push(ColumnType::Bool(match column_value {
+                        Some(column_value) => match parse_string_to_bool(column_value.as_str()) {
+                            Ok(val) => Some(val),
+                            Err(error) => return Err(TableParsingError::ParseError(error)),
+                        },
+                        None => None,
+                    })),
                 }
             }
         }
@@ -273,10 +305,10 @@ mod tests {
 
     fn get_test_json_array() -> Vec<Value> {
         json!([
-            {"name": "apple", "category": "fruit", "amount": "42",},
-            {"name": "bananas", "category": "fruit", "amount": "3",},
-            {"name": "flour", "category": "ingredient", "amount": null,},
-            {"name": "flour", "category": "ingredient", "amount": "5.67",},
+            {"name": "apple", "category": "fruit", "amount": 42,},
+            {"name": "bananas", "category": "fruit", "amount": 3,},
+            {"name": "flour", "category": "ingredient", "amount": 15,},
+            {"name": "flour", "category": "ingredient", "amount": 5.67,},
 
         ])
         .as_array()
@@ -287,29 +319,40 @@ mod tests {
     #[test]
     fn test_table() {
         let table: Table = Table::from_json_array(&get_test_json_array()).unwrap();
-
-        let _ = table.get_column_names().get(0).unwrap().clone();
+        assert_eq!(table.get_column_names(), vec!["amount", "category", "name"]);
+        assert_eq!(
+            table.get_column_types(),
+            vec![
+                ColumnType::String(Option::from("42".to_string())),
+                ColumnType::String(Option::from("fruit".to_string())),
+                ColumnType::String(Option::from("apple".to_string())),
+            ]
+        );
     }
 
     #[test]
     fn set_column_type_string_to_number() {
         let mut table: Table = Table::from_json_array(&get_test_json_array()).unwrap();
-
-        for row in &table {
-            println!("{:?}", &row.get("amount"));
-        }
+        assert_eq!(
+            table.get_column_types(),
+            vec![
+                ColumnType::String(Option::from("42".to_string())),
+                ColumnType::String(Option::from("fruit".to_string())),
+                ColumnType::String(Option::from("apple".to_string())),
+            ]
+        );
 
         table
             .set_column_type("amount", ColumnType::Number(None))
-            .expect("TODO: panic message");
+            .unwrap();
 
-        println!("here");
-        for row in &table {
-            println!("{:?}", &row.get("amount"));
-        }
-
-        for row in table.to_json_array().as_array().unwrap().iter() {
-            println!("{}", row)
-        }
+        assert_eq!(
+            table.get_column_types(),
+            vec![
+                ColumnType::Number(Option::from(42f32)),
+                ColumnType::String(Option::from("fruit".to_string())),
+                ColumnType::String(Option::from("apple".to_string())),
+            ]
+        );
     }
 }

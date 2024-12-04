@@ -15,6 +15,12 @@ where
         .map_err(|_| ParsingError::CouldNotParse(input.to_string()))
 }
 
+pub fn parse_string_to_bool(input: &str) -> Result<bool, ParsingError> {
+    input
+        .parse::<bool>()
+        .map_err(|_| ParsingError::CouldNotParse(input.to_string()))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

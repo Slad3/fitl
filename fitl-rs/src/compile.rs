@@ -113,6 +113,13 @@ fn parse_op(
                 };
                 ColumnType::Number(Some(temp))
             }
+            ColumnType::Bool(_) => match value_string.as_str().to_lowercase().as_ref() {
+                "true" | "1" => ColumnType::Bool(Some(true)),
+                "false" | "0" => ColumnType::Bool(Some(false)),
+                _ => {
+                    return Err(CompileError::InvalidToken(format!("Column {column} is a boolean column, {value_string} must be either \"true\" or \"false\"")));
+                }
+            },
         };
 
         let remaining_tokens = temp_tokens.split_off(2 + compare_op_index);
@@ -167,6 +174,7 @@ fn parse_neg(
     Ok((tokens, temp_stack))
 }
 
+#[allow(dead_code)]
 #[cfg(test)]
 mod tests {
     use super::*;

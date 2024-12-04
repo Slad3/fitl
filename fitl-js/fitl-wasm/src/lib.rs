@@ -46,7 +46,7 @@ pub fn test_json_input(input_table: JsValue) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn check_syntax(query: String, columns: Vec<String>) -> Result<bool, JsValue> {
+pub fn check_syntax(query: String, columns: Vec<String>, column_types: Vec<ColumnType>) -> Result<bool, JsValue> {
     let input_query = query.clone().trim().to_string();
 
     match compile_query(&input_query, &columns) {
