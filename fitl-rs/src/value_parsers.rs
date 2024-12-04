@@ -1,19 +1,18 @@
-use crate::data_structures::TableParsingError;
-
 use num_traits::Num;
 use std::str::FromStr;
 
-pub fn parse_string_to_number<T>(input: &str) -> Result<T, TableParsingError>
+#[derive(Debug, PartialEq, Clone)]
+pub enum ParsingError {
+    CouldNotParse(String),
+}
+
+pub fn parse_string_to_number<T>(input: &str) -> Result<T, ParsingError>
 where
     T: Num + FromStr,
 {
     input
         .parse::<T>()
-        .map_err(|_| TableParsingError::ParseError(input.to_string()))
-}
-
-pub fn parse_string_to_datetime(input: &str) -> Result<String, TableParsingError> {
-    Ok(input.to_string())
+        .map_err(|_| ParsingError::CouldNotParse(input.to_string()))
 }
 
 #[cfg(test)]

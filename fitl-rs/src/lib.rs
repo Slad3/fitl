@@ -16,6 +16,7 @@ use crate::filter::filter_table;
 use data_structures::CompileError;
 
 pub use crate::data_structures::{FITLError, InstructionStack};
+use crate::table::ColumnType;
 
 /// Pre-compiles query, gives specific compile errors for better query linting
 ///
@@ -30,13 +31,14 @@ pub use crate::data_structures::{FITLError, InstructionStack};
 pub fn compile_query(
     input_query: &str,
     columns: &Vec<String>,
+    column_types: &Vec<ColumnType>,
 ) -> Result<InstructionStack, CompileError> {
     let tokens = match tokenize(&input_query) {
         Ok(tokens) => tokens,
         Err(error) => return Err(error),
     };
 
-    match compile_tokens(tokens, columns) {
+    match compile_tokens(tokens, columns, column_types) {
         Ok(stack) => Ok(stack),
         Err(error) => Err(error),
     }
@@ -70,7 +72,11 @@ pub fn filter(compiled_query: &InstructionStack, table: &Table) -> Result<Table,
 ///
 /// A filtered down version of the inputted Table
 pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError> {
-    let instruction_stack = match compile_query(input_string, &table.get_column_names()) {
+    let instruction_stack = match compile_query(
+        input_string,
+        &table.get_column_names(),
+        &table.get_column_types(),
+    ) {
         Ok(stack) => stack,
         Err(error) => return Err(FITLError::CompileError(error)),
     };
@@ -84,6 +90,7 @@ pub fn filter_full(input_string: &str, table: &Table) -> Result<Table, FITLError
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::table::ColumnType;
     use serde_json::json;
     use serde_json::Value;
 
@@ -98,6 +105,18 @@ mod tests {
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Me And My Girlfriend"},
             {"artist": "Makaveli", "album": "The Don Killuminati: The 7 Day Theory", "title": "Against All Odds"},
         ]).as_array().unwrap().clone()
+    }
+
+    fn get_test_food_json_array() -> Vec<Value> {
+        json!([
+            {"name": "apple", "category": "fruit", "amount": "42",},
+            {"name": "bananas", "category": "fruit", "amount": "3",},
+            {"name": "flour", "category": "ingredient", "amount": "5.67",},
+            {"name": "flour", "category": "ingredient", "amount": "5.67",},
+        ])
+        .as_array()
+        .unwrap()
+        .clone()
     }
 
     #[test]
@@ -115,5 +134,35 @@ mod tests {
         };
 
         // println!("{:?}", filter_full(&query, &table))
+    }
+
+    #[test]
+    fn test_numerical_table_comparisons() {
+        let mut table: Table = Table::from_json_array(&get_test_food_json_array()).unwrap();
+
+        table
+            .set_column_type("amount", ColumnType::Number(0f32))
+            .expect("TODO: panic message");
+
+        for row in &table {
+            // println!("{:?}", &row);
+            println!("{:?}\t|\t {:?}", &row.get("amount"), &row.get("name"));
+        }
+
+        println!("\n\n\n");
+
+        for row in filter(
+            &compile_query(
+                "amount > 4",
+                &table.get_column_names(),
+                &table.get_column_types(),
+            )
+            .unwrap(),
+            &table,
+        )
+        .unwrap()
+        {
+            println!("{:?}\t|\t {:?}", &row.get("amount"), &row.get("name"));
+        }
     }
 }

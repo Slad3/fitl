@@ -1,3 +1,5 @@
+use crate::table::ColumnType;
+use crate::value_parsers::ParsingError;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[derive(Debug, PartialEq)]
@@ -21,7 +23,7 @@ pub enum BooleanComparisonOperator {
 pub struct Operation {
     pub column: String,
     pub operation: ComparisonOperator,
-    pub value: String, // TODO Update this to a dynamic type in accordance to ColumnType
+    pub value: ColumnType,
     pub negated: bool,
     pub case_sensitive: bool,
 }
@@ -106,7 +108,7 @@ pub enum ColumnParsingError {
 #[derive(Debug, Clone)]
 pub enum TableParsingError {
     ColumnParsingError(ColumnParsingError),
-    ParseError(String),
+    ParseError(ParsingError),
 }
 
 #[derive(Debug, PartialEq)]
@@ -117,6 +119,7 @@ pub enum CompileError {
     NoMatchingQuotes(String),
     NoColumnsDetected,
     NotEnoughTokens(TokenStack),
+    ParseError(ParsingError),
     WTFIsThisInput(TokenStack),
 }
 

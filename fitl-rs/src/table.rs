@@ -1,5 +1,5 @@
 use crate::data_structures::{ColumnParsingError, TableFormat, TableParsingError};
-use crate::value_parsers::{parse_string_to_datetime, parse_string_to_number};
+use crate::value_parsers::parse_string_to_number;
 use serde_json::{Map, Value};
 use std::cmp::PartialEq;
 use std::collections::HashMap;
@@ -11,15 +11,13 @@ pub type Columns = HashMap<String, Vec<ColumnType>>;
 pub enum ColumnType {
     String(String),
     Number(f32),
-    DateTime(String),
 }
 
 impl ColumnType {
-    fn to_string(&self) -> String {
+    pub fn to_string(&self) -> String {
         match self {
             ColumnType::String(s) => s.clone(),
             ColumnType::Number(s) => s.clone().to_string(),
-            ColumnType::DateTime(s) => s.clone(),
         }
     }
 }
@@ -59,10 +57,6 @@ impl Table {
         })
     }
 
-    pub fn from_csv_string(csv_string: &String) -> Result<Table, TableParsingError> {
-        todo!()
-    }
-
     pub fn to_json_array(&self) -> Value {
         let mut result: Vec<Value> = Vec::new();
 
@@ -75,10 +69,6 @@ impl Table {
         }
 
         Value::Array(result)
-    }
-
-    pub fn to_csv_string(&self) -> String {
-        todo!()
     }
 
     pub fn from_rows(rows: Vec<Row>, table_format: &TableFormat) -> Table {
@@ -109,9 +99,14 @@ impl Table {
     }
 
     pub fn get_column_names(&self) -> Vec<String> {
-        let mut result: Vec<String> = self.columns.keys().cloned().collect();
-        result.sort();
-        result
+        self.columns.keys().cloned().collect()
+    }
+
+    pub fn get_column_types(&self) -> Vec<ColumnType> {
+        self.columns
+            .values()
+            .filter_map(|column_values| column_values.get(0).cloned())
+            .collect()
     }
 
     pub fn get_original_format(&self) -> &TableFormat {
@@ -133,14 +128,14 @@ impl Table {
             })? {
                 match column_type {
                     ColumnType::Number(_) => new_column.push(ColumnType::Number(
-                        parse_string_to_number::<f32>(column_value.as_str())?,
+                        match parse_string_to_number::<f32>(column_value.as_str()) {
+                            Ok(n) => n,
+                            Err(error) => return Err(TableParsingError::ParseError(error)),
+                        },
                     )),
                     ColumnType::String(_) => {
                         new_column.push(ColumnType::String(column_value.clone()))
                     }
-                    ColumnType::DateTime(_) => new_column.push(ColumnType::DateTime(
-                        parse_string_to_datetime(&column_value.as_str())?,
-                    )),
                 }
             }
         }
