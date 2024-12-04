@@ -105,13 +105,13 @@ fn parse_op(
         let column_type = &column_types[column_index];
 
         let value = match column_type {
-            ColumnType::String(_) => ColumnType::String(value_string),
+            ColumnType::String(_) => ColumnType::String(Some(value_string)),
             ColumnType::Number(_) => {
                 let temp = match parse_string_to_number::<f32>(&value_string) {
                     Ok(num) => num,
                     Err(error) => return Err(CompileError::ParseError(error)),
                 };
-                ColumnType::Number(temp)
+                ColumnType::Number(Some(temp))
             }
         };
 
@@ -182,9 +182,9 @@ mod tests {
     }
     fn get_test_column_types() -> Vec<ColumnType> {
         vec![
-            ColumnType::String("".to_string()),
-            ColumnType::String("".to_string()),
-            ColumnType::String("".to_string()),
+            ColumnType::String(Some("".to_string())),
+            ColumnType::String(Some("".to_string())),
+            ColumnType::String(Some("".to_string())),
         ]
     }
 
@@ -198,9 +198,9 @@ mod tests {
 
     fn get_test_food_column_types() -> Vec<ColumnType> {
         vec![
-            ColumnType::String("".parse().unwrap()),
-            ColumnType::String("".to_string()),
-            ColumnType::Number(0f32),
+            ColumnType::String(Some("".parse().unwrap())),
+            ColumnType::String(Some("".to_string())),
+            ColumnType::Number(Some(0f32)),
         ]
     }
 
@@ -214,7 +214,7 @@ mod tests {
         let expected_stack = vec![Instruction::Operation(Operation {
             column: "artist".to_string(),
             operation: ComparisonOperator::Contains,
-            value: ColumnType::String("Pac".to_string()),
+            value: ColumnType::String(Some("Pac".to_string())),
             negated: false,
             case_sensitive: false,
         })];
@@ -238,7 +238,7 @@ mod tests {
         let expected_stack = vec![Instruction::Operation(Operation {
             column: "artist".to_string(),
             operation: ComparisonOperator::Equals,
-            value: ColumnType::String("Pac".to_string()),
+            value: ColumnType::String(Some("Pac".to_string())),
             negated: true,
             case_sensitive: true,
         })];
@@ -256,7 +256,7 @@ mod tests {
         let expected_stack = vec![Instruction::Operation(Operation {
             column: "artist".to_string(),
             operation: ComparisonOperator::Contains,
-            value: ColumnType::String("Pac".to_string()),
+            value: ColumnType::String(Some("Pac".to_string())),
             negated: false,
             case_sensitive: false,
         })];
@@ -277,7 +277,7 @@ mod tests {
             Instruction::Operation(Operation {
                 column: "artist".to_string(),
                 operation: ComparisonOperator::Contains,
-                value: ColumnType::String("Pac".to_string()),
+                value: ColumnType::String(Some("Pac".to_string())),
                 negated: false,
                 case_sensitive: false,
             }),
@@ -286,7 +286,7 @@ mod tests {
                 Instruction::Operation(Operation {
                     column: "album".to_string(),
                     operation: ComparisonOperator::Contains,
-                    value: ColumnType::String("Against The World".to_string()),
+                    value: ColumnType::String(Some("Against The World".to_string())),
                     negated: false,
                     case_sensitive: false,
                 }),
@@ -294,7 +294,7 @@ mod tests {
                 Instruction::Operation(Operation {
                     column: "album".to_string(),
                     operation: ComparisonOperator::Contains,
-                    value: ColumnType::String("Strictly 4".to_string()),
+                    value: ColumnType::String(Some("Strictly 4".to_string())),
                     negated: false,
                     case_sensitive: false,
                 }),
@@ -361,7 +361,7 @@ mod tests {
             Instruction::Operation(Operation {
                 column: "artist".to_string(),
                 operation: ComparisonOperator::IsIn,
-                value: ColumnType::String("Pac".to_string()),
+                value: ColumnType::String(Some("Pac".to_string())),
                 negated: false,
                 case_sensitive: false,
             }),
@@ -371,7 +371,7 @@ mod tests {
                 Instruction::Operation(Operation {
                     column: "album".to_string(),
                     operation: ComparisonOperator::Contains,
-                    value: ColumnType::String("Against The World".to_string()),
+                    value: ColumnType::String(Some("Against The World".to_string())),
                     negated: false,
                     case_sensitive: false,
                 }),
@@ -380,7 +380,7 @@ mod tests {
                     Instruction::Operation(Operation {
                         column: "album".to_string(),
                         operation: ComparisonOperator::Contains,
-                        value: ColumnType::String("Strictly 4".to_string()),
+                        value: ColumnType::String(Some("Strictly 4".to_string())),
                         negated: false,
                         case_sensitive: false,
                     }),
@@ -388,7 +388,7 @@ mod tests {
                     Instruction::Operation(Operation {
                         column: "title".to_string(),
                         operation: ComparisonOperator::Equals,
-                        value: ColumnType::String("I get Around".to_string()),
+                        value: ColumnType::String(Some("I get Around".to_string())),
                         negated: false,
                         case_sensitive: false,
                     }),

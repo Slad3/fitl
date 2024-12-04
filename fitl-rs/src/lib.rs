@@ -109,10 +109,10 @@ mod tests {
 
     fn get_test_food_json_array() -> Vec<Value> {
         json!([
-            {"name": "apple", "category": "fruit", "amount": "42",},
-            {"name": "bananas", "category": "fruit", "amount": "3",},
-            {"name": "flour", "category": "ingredient", "amount": "5.67",},
-            {"name": "flour", "category": "ingredient", "amount": "5.67",},
+            {"name": "apple", "category": "fruit", "amount": 42,},
+            {"name": "bananas", "category": "fruit", "amount": 3,},
+            {"name": "flour", "category": "ingredient", "amount": null,},
+            {"name": "flour", "category": "ingredient", "amount": 5.67,},
         ])
         .as_array()
         .unwrap()
@@ -141,7 +141,7 @@ mod tests {
         let mut table: Table = Table::from_json_array(&get_test_food_json_array()).unwrap();
 
         table
-            .set_column_type("amount", ColumnType::Number(0f32))
+            .set_column_type("amount", ColumnType::Number(None))
             .expect("TODO: panic message");
 
         for row in &table {
@@ -153,7 +153,7 @@ mod tests {
 
         for row in filter(
             &compile_query(
-                "amount > 4",
+                "amount > -1",
                 &table.get_column_names(),
                 &table.get_column_types(),
             )

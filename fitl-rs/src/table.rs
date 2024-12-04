@@ -9,15 +9,31 @@ pub type Columns = HashMap<String, Vec<ColumnType>>;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ColumnType {
-    String(String),
-    Number(f32),
+    String(Option<String>),
+    Number(Option<f32>),
 }
 
 impl ColumnType {
     pub fn to_string(&self) -> String {
         match self {
-            ColumnType::String(s) => s.clone(),
-            ColumnType::Number(s) => s.clone().to_string(),
+            ColumnType::String(s) => s.clone().unwrap_or("null".to_string()),
+            ColumnType::Number(s) => match s.clone() {
+                Some(n) => n.to_string(),
+                None => "null".to_string(),
+            },
+        }
+    }
+
+    pub fn to_value(&self) -> Option<String> {
+        match self {
+            ColumnType::String(s) => match s.clone() {
+                Some(n) => Some(n),
+                None => None,
+            },
+            ColumnType::Number(s) => match s.clone() {
+                Some(n) => Some(n.to_string()),
+                None => None,
+            },
         }
     }
 }
@@ -44,9 +60,10 @@ impl Table {
         for json_row in input_json_array.iter() {
             for (key, value) in json_row.as_object().expect("Unable to unwrap Value").iter() {
                 let column_array = result_hash.entry(key.clone()).or_insert_with(Vec::new);
-                column_array.push(ColumnType::String(
-                    value.as_str().unwrap_or("INVALIDTYPE").to_string(),
-                ));
+                column_array.push(ColumnType::String(match value.as_str() {
+                    Some(s) => Some(s.to_string()),
+                    None => None,
+                }));
             }
         }
 
@@ -63,7 +80,10 @@ impl Table {
         for row in self {
             let mut json_map: Map<String, Value> = Map::new();
             for (key, value) in row {
-                json_map.insert(key, Value::String(value.to_string()));
+                match value.to_value() {
+                    Some(n) => json_map.insert(key, Value::String(n)),
+                    None => json_map.insert(key.to_string(), Value::Null),
+                };
             }
             result.push(Value::Object(json_map));
         }
@@ -127,12 +147,17 @@ impl Table {
                 )))
             })? {
                 match column_type {
-                    ColumnType::Number(_) => new_column.push(ColumnType::Number(
-                        match parse_string_to_number::<f32>(column_value.as_str()) {
-                            Ok(n) => n,
-                            Err(error) => return Err(TableParsingError::ParseError(error)),
-                        },
-                    )),
+                    ColumnType::Number(_) => {
+                        new_column.push(ColumnType::Number(match column_value {
+                            Some(column_value) => {
+                                match parse_string_to_number::<f32>(column_value.as_str()) {
+                                    Ok(n) => Some(n),
+                                    Err(error) => return Err(TableParsingError::ParseError(error)),
+                                }
+                            }
+                            None => None,
+                        }))
+                    }
                     ColumnType::String(_) => {
                         new_column.push(ColumnType::String(column_value.clone()))
                     }
@@ -166,7 +191,7 @@ impl Iterator for Table {
                 .expect("Column Name doesn't exist")
                 .get(self.current_index)
             {
-                None => &ColumnType::String("".to_string()),
+                None => &ColumnType::String(Some("".to_string())),
                 Some(val) => {
                     changed = true;
                     &val.clone()
@@ -222,7 +247,7 @@ impl<'a> Iterator for TableIterator<'a> {
         for column_name in self.table.columns.keys() {
             let value: &ColumnType =
                 match self.table.columns.get(column_name)?.get(self.current_index) {
-                    None => &ColumnType::String("".to_string()),
+                    None => &ColumnType::String(Some("".to_string())),
                     Some(val) => {
                         changed = true;
                         val
@@ -250,7 +275,7 @@ mod tests {
         json!([
             {"name": "apple", "category": "fruit", "amount": "42",},
             {"name": "bananas", "category": "fruit", "amount": "3",},
-            {"name": "flour", "category": "ingredient", "amount": "5.67",},
+            {"name": "flour", "category": "ingredient", "amount": null,},
             {"name": "flour", "category": "ingredient", "amount": "5.67",},
 
         ])
@@ -275,12 +300,16 @@ mod tests {
         }
 
         table
-            .set_column_type("amount", ColumnType::Number(0f32))
+            .set_column_type("amount", ColumnType::Number(None))
             .expect("TODO: panic message");
 
         println!("here");
         for row in &table {
             println!("{:?}", &row.get("amount"));
+        }
+
+        for row in table.to_json_array().as_array().unwrap().iter() {
+            println!("{}", row)
         }
     }
 }

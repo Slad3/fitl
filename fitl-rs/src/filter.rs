@@ -17,19 +17,16 @@ fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
         Some(value) => value,
     };
 
-    println!("{:?}", &operation_value_input);
-    println!("{:?}", &row_value_input);
-
     let (operation_val, row_val) = match matches!(operation_value_input, _row_value_input) {
         true => (&operation.value, row_value_input),
         false => (
-            &ColumnType::String(operation_value_input.to_string()),
-            &ColumnType::String(row_value_input.to_string()),
+            &ColumnType::String(Some(operation_value_input.to_string())),
+            &ColumnType::String(Some(row_value_input.to_string())),
         ),
     };
 
     let result: bool = match row_val {
-        ColumnType::String(row_valu) => {
+        ColumnType::String(Some(row_valu)) => {
             let mut operation_value = operation_val.to_string(); // Will always match to string
             let mut row_value = row_valu.to_string();
 
@@ -49,8 +46,8 @@ fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
             }
         }
 
-        ColumnType::Number(row_value) => match operation_val {
-            ColumnType::String(operation_value) => match operation.operation {
+        ColumnType::Number(Some(row_value)) => match operation_val {
+            ColumnType::String(Some(operation_value)) => match operation.operation {
                 ComparisonOperator::Equals => operation_value == &row_value.to_string(),
                 ComparisonOperator::Contains => row_value.to_string().contains(operation_value),
                 ComparisonOperator::IsIn => operation_value.contains(&row_value.to_string()),
@@ -75,7 +72,7 @@ fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
                     }
                 }
             },
-            ColumnType::Number(operation_value) => match operation.operation {
+            ColumnType::Number(Some(operation_value)) => match operation.operation {
                 ComparisonOperator::Equals => operation_value == row_value,
                 ComparisonOperator::Contains => {
                     row_value.to_string().contains(&operation_value.to_string())
@@ -88,7 +85,9 @@ fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
                 ComparisonOperator::MoreThan => row_value > operation_value,
                 ComparisonOperator::MoreThanEquals => row_value >= operation_value,
             },
+            _ => false,
         },
+        _ => false,
     };
 
     if operation.negated {
@@ -183,9 +182,9 @@ mod tests {
 
     fn get_test_column_types() -> Vec<ColumnType> {
         vec![
-            ColumnType::String("".parse().unwrap()),
-            ColumnType::String("".parse().unwrap()),
-            ColumnType::String("".parse().unwrap()),
+            ColumnType::String(Some("".parse().unwrap())),
+            ColumnType::String(Some("".parse().unwrap())),
+            ColumnType::String(Some("".parse().unwrap())),
         ]
     }
 
@@ -221,7 +220,7 @@ mod tests {
         let operation = Operation {
             column: "artist".to_string(),
             operation: ComparisonOperator::Contains,
-            value: ColumnType::String("Pac".to_string()),
+            value: ColumnType::String(Some("Pac".to_string())),
             negated: false,
             case_sensitive: false,
         };
