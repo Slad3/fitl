@@ -109,6 +109,7 @@ pub enum ColumnParsingError {
 pub enum TableParsingError {
     ColumnParsingError(ColumnParsingError),
     ParseError(ParsingError),
+    CouldNotConvertColumn(String),
 }
 
 #[derive(Debug, PartialEq)]

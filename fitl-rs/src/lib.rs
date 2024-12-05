@@ -16,7 +16,8 @@ use crate::filter::filter_table;
 use data_structures::CompileError;
 
 pub use crate::data_structures::{FITLError, InstructionStack};
-use crate::table::ColumnType;
+
+pub use crate::table::ColumnType;
 
 /// Pre-compiles query, gives specific compile errors for better query linting
 ///

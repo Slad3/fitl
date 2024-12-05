@@ -96,9 +96,16 @@ impl Table {
         for row in self {
             let mut json_map: Map<String, Value> = Map::new();
             for (key, value) in row {
-                match value.to_value() {
-                    Some(n) => json_map.insert(key, Value::String(n)),
-                    None => json_map.insert(key.to_string(), Value::Null),
+                match value {
+                    ColumnType::String(None)
+                    | ColumnType::Number(None)
+                    | ColumnType::Bool(None) => json_map.insert(key.to_string(), Value::Null),
+                    ColumnType::String(Some(val)) => json_map.insert(key, Value::String(val)),
+                    ColumnType::Number(Some(val)) => json_map.insert(
+                        key,
+                        Value::Number(serde_json::Number::from_f64(val as f64).unwrap()),
+                    ),
+                    ColumnType::Bool(Some(val)) => json_map.insert(key, Value::Bool(val)),
                 };
             }
             result.push(Value::Object(json_map));
@@ -354,5 +361,20 @@ mod tests {
                 ColumnType::String(Option::from("apple".to_string())),
             ]
         );
+    }
+
+    #[test]
+    fn test_to_json_array_various_types() {
+        let mut table: Table = Table::from_json_array(&get_test_json_array()).unwrap();
+
+        table
+            .set_column_type("amount", ColumnType::Number(None))
+            .unwrap();
+
+        for row in &table {
+            println!("{:?}", row.get_key_value("amount").unwrap());
+        }
+
+        println!("{:?}", table.to_json_array());
     }
 }

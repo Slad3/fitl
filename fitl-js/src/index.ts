@@ -1,4 +1,3 @@
-// import init, { fitl_filter_custom_table_format } from 'fitl-wasm'
 import init, { fitl_filter_custom_table_format } from '../fitl-wasm/pkg/'
 import { buffer } from "src/fitl-wasm.wasm"
 import { cleanMap, mapToObj } from './utils'
@@ -7,14 +6,17 @@ let wasmInitialized = false;
 
 /**
  * @typedef {Object} Options
- * @property {string} tableFormat Specific format for inputted table. Default "JSARRAY"
+ * @property {string} tableFormat Specific format for inputted table. Default "JSARRAY".
+ * @property {Record} columnTypes For specifying a column type. Syntax: {"column name": "column type"}. Throws an error if the column doesn't exist or column can't be converted. Valid column types include String (default), number (interpreted and stored as float32), and boolean
  */
 export type Options = {
     tableFormat?: string
+    columnTypes?: Record<string, string>
 }
 
 const defaultOptions: Options = {
-    tableFormat: "JSARRAY"
+    tableFormat: "JSARRAY",
+    columnTypes: {}
 }
 
 
@@ -23,7 +25,10 @@ function replaceObjectValues(inputOptions: Options, defaultOptions: Options): Op
 
     for (const key in inputOptions) {
         if (key in defaultOptions) {
-            result[key as keyof Options] = inputOptions[key as keyof Options];
+            const value = inputOptions[key as keyof Options];
+            if (value !== undefined) {
+                result[key as keyof Options] = value as any;
+            }
         }
     }
 
@@ -50,7 +55,7 @@ export async function fitlFilter(query: string, input_table: any, options?: Opti
     const inputOptions = parseOptions(options);
 
     try {
-        let result = fitl_filter_custom_table_format(query, input_table, inputOptions.tableFormat!)
+        let result = fitl_filter_custom_table_format(query, input_table, inputOptions)
 
         if (inputOptions.tableFormat === "JSARRAY") {
             return cleanMap(result)
