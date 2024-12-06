@@ -11,11 +11,11 @@
     
 		<link href="../_app/immutable/assets/0.Bw95mZSg.css" rel="stylesheet">
 		<link href="../_app/immutable/assets/7.BNBB_SeW.css" rel="stylesheet">
-		<link rel="modulepreload" href="../_app/immutable/entry/start.Sb6cSFDS.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/entry.oini_PpP.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.D9sF1zkK.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/entry.uLOqLMoG.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/runtime.CTT-Pcax.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/paths.D5nNGc9H.js">
-		<link rel="modulepreload" href="../_app/immutable/entry/app.CWAmxaUM.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/paths.BwJeq-jK.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.AShbjwrf.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/render.CHs5yNSz.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/store.ujo65ira.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/misc.CIFqOFj7.js">
@@ -23,14 +23,14 @@
 		<link rel="modulepreload" href="../_app/immutable/chunks/if.ChPsGs4d.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/props.h97ik4iK.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/index-client.dderz5kj.js">
-		<link rel="modulepreload" href="../_app/immutable/nodes/0.DeOVCLlT.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/0.7DJvGy20.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/legacy.B5UzwLvP.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/attributes.XrBall3x.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/lifecycle.D--sFdvx.js">
-		<link rel="modulepreload" href="../_app/immutable/chunks/stores.CvVZLNUE.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/stores.DAqYqNBe.js">
 		<link rel="modulepreload" href="../_app/immutable/nodes/2.BjK16VZU.js">
 		<link rel="modulepreload" href="../_app/immutable/chunks/layout.CWzl-_XS.js">
-		<link rel="modulepreload" href="../_app/immutable/nodes/7.zhl8CN2Y.js">
+		<link rel="modulepreload" href="../_app/immutable/nodes/7.Cg95YQZ_.js">
 </head>
 
 <body data-sveltekit-preload-data="hover">
@@ -82,11 +82,51 @@ async function main(){
 }
 main();
     </code></pre> <p>Default tableFormat is JSARRAY, other table formats coming soon and will have to be specifically
-		defined in options</p></article><!----><!----><!----><!--]--><!----></main></div><!----><!--]--> <!--[!--><!--]--><!--]-->
+		defined in options</p> <h2>Column Types</h2> <p>You can specify a data type for a column for more specific query options.</p> <p>For example:</p> <pre class="codeblock language-javascript svelte-1c1hz11"><code>
+let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+console.log(await fitlFilter(query, tableData));
+
+</code></pre> <p>The above will automatically parse the "amount" column as a string. This example outputs:</p> <pre class="codeblock language-javascript svelte-1c1hz11"><code>
+  [{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]
+    </code></pre> <p>And only allows you to do string based operations on the amount column. To specify that the
+		amount column is a numeric column in the options parameter of "filtFilter" like so:</p> <pre class="codeblock language-javascript svelte-1c1hz11"><code>
+const options: Options = {
+    columnTypes: {
+        amount: "number",
+    }
+}
+
+</code></pre> <p>In code example:</p> <pre class="codeblock language-javascript svelte-1c1hz11"><code>
+let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+const options: Options = {
+    tableFormat: "JSARRAY",
+    columnTypes: {
+        amount: "number",
+    }
+}
+
+console.log(await fitlFilter(query, tableData, options));
+
+</code></pre> <p>Which allows for numeric operations on columns and outputs the "amount" values as actual
+		JavaScript numbers:</p> <pre class="codeblock language-javascript svelte-1c1hz11"><code>
+  [{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]
+    </code></pre></article><!----><!----><!----><!--]--><!----></main></div><!----><!--]--> <!--[!--><!--]--><!--]-->
 			
 			<script>
 				{
-					__sveltekit_173r02a = {
+					__sveltekit_1bp1ogr = {
 						base: new URL("..", location).pathname.slice(0, -1)
 					};
 
@@ -95,8 +135,8 @@ main();
 					const data = [null,null,null];
 
 					Promise.all([
-						import("../_app/immutable/entry/start.Sb6cSFDS.js"),
-						import("../_app/immutable/entry/app.CWAmxaUM.js")
+						import("../_app/immutable/entry/start.D9sF1zkK.js"),
+						import("../_app/immutable/entry/app.AShbjwrf.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2, 7],
