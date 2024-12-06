@@ -3,32 +3,91 @@ use crate::data_structures::{
     RuntimeError,
 };
 
-use crate::table::{Row, Table};
+use crate::table::{ColumnType, Row, Table};
+use crate::value_parsers::parse_string_to_number;
 
 fn operate(operation: &Operation, row: &Row) -> Result<bool, RuntimeError> {
-    let mut operation_value = operation.value.clone();
-    let mut row_value = match row.get(&operation.column) {
+    let operation_value_input = &operation.value.clone();
+    let row_value_input = match row.get(&operation.column) {
         None => {
             return Err(RuntimeError::InvalidColumn(
                 format!("Invalid Operation: {}", &operation.column).to_string(),
             ))
         }
-        Some(value) => value.clone(),
+        Some(value) => value,
     };
 
-    if !operation.case_sensitive {
-        operation_value = operation_value.to_lowercase();
-        row_value = row_value.to_lowercase();
-    }
+    let (operation_val, row_val) = match matches!(operation_value_input, _row_value_input) {
+        true => (&operation.value, row_value_input),
+        false => (
+            &ColumnType::String(Some(operation_value_input.to_string())),
+            &ColumnType::String(Some(row_value_input.to_string())),
+        ),
+    };
 
-    let result = match operation.operation {
-        ComparisonOperator::Equals => operation_value == row_value,
-        ComparisonOperator::Contains => row_value.contains(&operation_value),
-        ComparisonOperator::IsIn => operation_value.contains(&row_value),
-        ComparisonOperator::LessThan => row_value < operation_value,
-        ComparisonOperator::LessThanEquals => row_value <= operation_value,
-        ComparisonOperator::MoreThan => row_value > operation_value,
-        ComparisonOperator::MoreThanEquals => row_value >= operation_value,
+    let result: bool = match row_val {
+        ColumnType::String(Some(row_valu)) => {
+            let mut operation_value = operation_val.to_string(); // Will always match to string
+            let mut row_value = row_valu.to_string();
+
+            if !operation.case_sensitive {
+                operation_value = operation_value.to_lowercase();
+                row_value = row_value.to_lowercase();
+            }
+
+            match operation.operation {
+                ComparisonOperator::Equals => operation_value == *row_value,
+                ComparisonOperator::Contains => row_value.contains(&operation_value),
+                ComparisonOperator::IsIn => operation_value.contains(&row_value),
+                ComparisonOperator::LessThan => &row_value < &operation_value,
+                ComparisonOperator::LessThanEquals => &row_value <= &operation_value,
+                ComparisonOperator::MoreThan => &row_value > &operation_value,
+                ComparisonOperator::MoreThanEquals => &row_value >= &operation_value,
+            }
+        }
+
+        ColumnType::Number(Some(row_value)) => match operation_val {
+            ColumnType::String(Some(operation_value)) => match operation.operation {
+                ComparisonOperator::Equals => operation_value == &row_value.to_string(),
+                ComparisonOperator::Contains => row_value.to_string().contains(operation_value),
+                ComparisonOperator::IsIn => operation_value.contains(&row_value.to_string()),
+                ComparisonOperator::LessThan
+                | ComparisonOperator::LessThanEquals
+                | ComparisonOperator::MoreThan
+                | ComparisonOperator::MoreThanEquals => {
+                    let op_val = match parse_string_to_number::<f32>(
+                        operation_value.to_ascii_lowercase().as_str(),
+                    ) {
+                        Ok(num) => num,
+                        Err(_) => return Err(RuntimeError::InvalidOperation(format!(
+                            "Cannot do {operation_value} operation on mixed string and number types {operation_value} {row_value}"
+                        )))
+                    };
+                    match operation.operation {
+                        ComparisonOperator::LessThan => &op_val < &row_value,
+                        ComparisonOperator::LessThanEquals => &op_val <= &row_value,
+                        ComparisonOperator::MoreThan => &op_val > &row_value,
+                        ComparisonOperator::MoreThanEquals => &op_val >= &row_value,
+                        _ => unreachable!(),
+                    }
+                }
+            },
+            ColumnType::Number(Some(operation_value)) => match operation.operation {
+                ComparisonOperator::Equals => operation_value == row_value,
+                ComparisonOperator::Contains => {
+                    row_value.to_string().contains(&operation_value.to_string())
+                }
+                ComparisonOperator::IsIn => {
+                    operation_value.to_string().contains(&row_value.to_string())
+                }
+                ComparisonOperator::LessThan => row_value < operation_value,
+                ComparisonOperator::LessThanEquals => row_value <= operation_value,
+                ComparisonOperator::MoreThan => row_value > operation_value,
+                ComparisonOperator::MoreThanEquals => row_value >= operation_value,
+            },
+            _ => false,
+        },
+        _ => false,
     };
 
     if operation.negated {
@@ -121,6 +180,14 @@ mod tests {
         ]
     }
 
+    fn get_test_column_types() -> Vec<ColumnType> {
+        vec![
+            ColumnType::String(Some("".parse().unwrap())),
+            ColumnType::String(Some("".parse().unwrap())),
+            ColumnType::String(Some("".parse().unwrap())),
+        ]
+    }
+
     fn get_test_json_table() -> Vec<Value> {
         json!([
             {"artist": "2Pac", "album": "Me Against the World", "title": "So Many Tears"},
@@ -153,7 +220,7 @@ mod tests {
         let operation = Operation {
             column: "artist".to_string(),
             operation: ComparisonOperator::Contains,
-            value: "Pac".to_string(),
+            value: ColumnType::String(Some("Pac".to_string())),
             negated: false,
             case_sensitive: false,
         };
@@ -166,10 +233,11 @@ mod tests {
     fn test_filter_row() {
         let row = get_test_row();
         let columns = get_test_columns();
+        let columns_types = get_test_column_types();
 
         let input_query = r#"artist =: Pac & album =: "Against the World""#;
         let tokens = tokenize(input_query).unwrap();
-        let instruction_stack = compile_tokens(tokens, &columns).unwrap();
+        let instruction_stack = compile_tokens(tokens, &columns, &columns_types).unwrap();
 
         let result = filter_row(&instruction_stack, &row).unwrap();
         assert_eq!(result, true)
@@ -179,15 +247,16 @@ mod tests {
     fn test_filter_case_sensitive() {
         let row = get_test_row();
         let columns = get_test_columns();
+        let columns_types = get_test_column_types();
 
         let input_query = r#"artist ^=: Pac"#;
         let tokens = tokenize(input_query).unwrap();
-        let instruction_stack = compile_tokens(tokens, &columns).unwrap();
+        let instruction_stack = compile_tokens(tokens, &columns, &columns_types).unwrap();
         assert_eq!(filter_row(&instruction_stack, &row).unwrap(), true);
 
         let input_query = r#"artist ^=: pac"#;
         let tokens = tokenize(input_query).unwrap();
-        let instruction_stack = compile_tokens(tokens, &columns).unwrap();
+        let instruction_stack = compile_tokens(tokens, &columns, &columns_types).unwrap();
         let result = filter_row(&instruction_stack, &row).unwrap();
         assert_eq!(result, false);
     }
@@ -196,10 +265,11 @@ mod tests {
     fn test_filter_negate_parenteses() {
         let row = get_test_row();
         let columns = get_test_columns();
+        let columns_types = get_test_column_types();
 
         let input_query = r#"!(artist =: Pac)"#;
         let tokens = tokenize(input_query).unwrap();
-        let instruction_stack = compile_tokens(tokens, &columns).unwrap();
+        let instruction_stack = compile_tokens(tokens, &columns, &columns_types).unwrap();
         assert_eq!(filter_row(&instruction_stack, &row).unwrap(), false);
     }
 
@@ -207,10 +277,11 @@ mod tests {
     fn test_filter_table() {
         let table: Table = get_test_table().unwrap();
         let columns = get_test_columns();
+        let columns_types = get_test_column_types();
 
         let input_query = r#"artist = Makaveli"#;
         let tokens = tokenize(input_query).unwrap();
-        let instruction_stack = compile_tokens(tokens, &columns).unwrap();
+        let instruction_stack = compile_tokens(tokens, &columns, &columns_types).unwrap();
         let result_table = filter_table(&instruction_stack, &table).unwrap();
 
         let expected_table = Table::from_json_array(json!([

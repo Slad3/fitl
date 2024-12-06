@@ -84,6 +84,73 @@ main();`}
 		Default tableFormat is JSARRAY, other table formats coming soon and will have to be specifically
 		defined in options
 	</p>
+
+	<h2>Column Types</h2>
+	<p>You can specify a data type for a column for more specific query options.</p>
+
+	<p>For example:</p>
+
+	<pre class="codeblock language-javascript"><code>
+{`let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+console.log(await fitlFilter(query, tableData));
+`}
+</code></pre>
+
+	<p>The above will automatically parse the "amount" column as a string. This example outputs:</p>
+
+	<pre class="codeblock language-javascript"><code>
+{`  [{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]`}
+    </code></pre>
+
+	<p>
+		And only allows you to do string based operations on the amount column. To specify that the
+		amount column is a numeric column in the options parameter of "filtFilter" like so:
+	</p>
+	<pre class="codeblock language-javascript"><code>
+{`const options: Options = {
+    columnTypes: {
+        amount: "number",
+    }
+}
+`}
+</code></pre>
+
+	<p>In code example:</p>
+
+	<pre class="codeblock language-javascript"><code>
+{`let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+const options: Options = {
+    tableFormat: "JSARRAY",
+    columnTypes: {
+        amount: "number",
+    }
+}
+
+console.log(await fitlFilter(query, tableData, options));
+`}
+</code></pre>
+
+	<p>
+		Which allows for numeric operations on columns and outputs the "amount" values as actual
+		JavaScript numbers:
+	</p>
+	<pre class="codeblock language-javascript"><code>
+{`  [{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]`}
+    </code></pre>
+
+
 </article>
 
 <style>
