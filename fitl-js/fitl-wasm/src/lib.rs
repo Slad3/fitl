@@ -253,35 +253,3 @@ pub fn fitl_filter_custom(
         Err(error) => Err(format_js_error("FilterError", &format!("{:?}", error))),
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-//     fn get_test_json_array() -> Vec<Value> {
-//         json!([
-//             {"name": "apple", "category": "fruit", "amount": 42,},
-//             {"name": "bananas", "category": "fruit", "amount": 3,},
-//             {"name": "flour", "category": "ingredient", "amount": 15,},
-//             {"name": "flour", "category": "ingredient", "amount": 5.67,},
-//
-//         ])
-//         .as_array()
-//         .unwrap()
-//         .clone()
-//     }
-//
-//     #[test]
-//     fn test_table() {
-//         let table: Table = Table::from_json_array(&get_test_json_array()).unwrap();
-//         assert_eq!(table.get_column_names(), vec!["amount", "category", "name"]);
-//         assert_eq!(
-//             table.get_column_types(),
-//             vec![
-//                 ColumnType::String(Option::from("42".to_string())),
-//                 ColumnType::String(Option::from("fruit".to_string())),
-//                 ColumnType::String(Option::from("apple".to_string())),
-//             ]
-//         );
-//     }
-// }

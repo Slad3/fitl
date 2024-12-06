@@ -39,7 +39,6 @@ main();
 Options are optional of course, currently used to specify input/output table types with other future options coming soon.
 
 ```typescript
-
 import  { fitlFilter, type Options } from 'fitl-js';
 
 let tableData = [
@@ -61,6 +60,69 @@ async function main(){
 }
 main();
 ```
+
+## Column Types
+
+ You can specify a data type for a column for more specific query options.
+
+ For example:
+
+```typescript
+let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+console.log(await fitlFilter(query, tableData));
+```
+
+ The above will automatically parse the "amount" column as a string. This example outputs:
+
+```typescript
+{`[{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]`}
+```
+
+And only allows you to do string based operations on the amount column. To specify that the
+amount column is a numeric column in the options parameter of "filtFilter" like so:
+
+```typescript
+const options: Options = {
+    columnTypes: {
+        amount: "number",
+    }
+}
+```
+
+In code example:
+
+```typescript
+let tableData = [
+    { name: "apple", amount: 3 },
+    { name: "banana", amount: 8 }
+];
+let query = "";
+
+const options: Options = {
+    tableFormat: "JSARRAY",
+    columnTypes: {
+        amount: "number",
+    }
+}
+
+console.log(await fitlFilter(query, tableData, options));
+```
+
+  Which allows for numeric operations on columns and outputs the "amount" values as actual
+  JavaScript numbers:
+
+```typescript
+{`[{ name: "apple", amount: 3 },
+   { name: "banana", amount: 8 }]`}
+```
+
+Available column types are "string", "number", and "boolean"
 
 ## Building from Source
 
