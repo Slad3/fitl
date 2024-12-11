@@ -67,10 +67,8 @@ NegSym [sym] -> !ComparOp | !BoolOp | !CaseSens
 
 - Add "re" Comparison symbol for regex matching
 - Add "~" symbol for a soft match excluding any non-alphanumeric characters in matching
-- Add custom type structures for table columns
 - Add chaining |/& statements ('artist =: roots | "Black Thought" | Prince')
 - Add more ways to create a table
 - Add build scripts for
   - Standard Rust library
-  - WASM js library
   - Compiled python library
