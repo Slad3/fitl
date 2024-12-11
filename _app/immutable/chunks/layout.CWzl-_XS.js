@@ -1,1 +1,0 @@
-import{c as f,a as t}from"./disclose-version.BMbhOq8Q.js";import{b as c,E as m,a as l,F as p,G as u,h,f as v,g as d,i as e,j as g}from"./runtime.CTT-Pcax.js";function b(o,a,...s){var r=o,i=p,n;c(()=>{i!==(i=a())&&(n&&(u(n),n=null),n=l(()=>i(r,...s)))},m),h&&(r=v)}function j(o,a){d(a,!0);var s=f(),r=e(s);b(r,()=>a.children),t(o,s),g()}export{j as L};

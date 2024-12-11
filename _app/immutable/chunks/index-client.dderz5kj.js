@@ -1,1 +1,0 @@
-import{w as t,a1 as r,v as u,x as a}from"./runtime.CTT-Pcax.js";function c(o){throw new Error("lifecycle_outside_component")}function e(o){t===null&&c(),r&&t.l!==null?l(t).m.push(o):u(()=>{const n=a(o);if(typeof n=="function")return n})}function l(o){var n=o.l;return n.u??(n.u={a:[],b:[],m:[]})}export{e as o};
