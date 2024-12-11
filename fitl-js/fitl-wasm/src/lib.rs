@@ -51,30 +51,6 @@ struct Options {
     column_types: HashMap<String, String>,
 }
 
-// fn column_types_from_options(
-//     column_types_table: &HashMap<String, String>,
-//     columns: &Vec<String>,
-// ) -> Result<Vec<ColumnType>, TableParsingError> {
-//     let mut result: Vec<ColumnType> = Vec::new();
-//
-//     for column_name in columns {
-//         match column_types_table.get_key_value(column_name) {
-//             Some((key, value)) => {
-//                 result.push(js_column_type_to_column_type(value).ok_or_else(|| {
-//                     return TableParsingError::CouldNotConvertColumn(key.clone());
-//                 })?)
-//             }
-//             None => {
-//                 result.push(ColumnType::String(Option::from(
-//                     "<EmptyString>".to_string(),
-//                 )));
-//             }
-//         };
-//     }
-//
-//     Ok(result)
-// }
-
 fn column_types_from_options(
     column_types_table: &HashMap<String, String>,
     columns: &Vec<String>,

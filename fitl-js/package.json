@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run wasminstall && tsup",
+    "build": "pnpm run wasminstall && tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -30,7 +30,6 @@
   },
   "homepage": "https://fitl.benbarcaskey.com/",
   "dependencies": {
-    "@assemblyscript/loader": "^0.27.31",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.3.0",
     "wasmwrap": "^1.0.0"

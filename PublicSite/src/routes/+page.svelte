@@ -141,7 +141,7 @@
 	<h2>Why did I, specifically, create FiTL?</h2>
 	<p>
 		Because Spotify and Genius.com's search algorithm really freaking sucks. Learn more <a
-			href="https://github.com/Slad3/FilterTableLanguage"
+			href="{base}/about"
 			class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
 		>
 			here
