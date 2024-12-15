@@ -422,7 +422,7 @@
 			<a
 				type="button"
 				class="inline-flex justify-center p-2 rounded cursor-pointer hover:text-white text-gray-400 hover:bg-hover-accent box-content h-12 w-12"
-				href="https://benbarcaskey.com/"
+				href="https://github.com/Slad3/fitl"
 			>
 				<img src={githubLogo} alt="GitHub" class="githubLogo" />
 			</a>

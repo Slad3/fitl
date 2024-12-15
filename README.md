@@ -1,6 +1,6 @@
 # [FiTL (Filter Table Language)]("https://fitl.benbarcaskey.com/")
 
-A simple easy to learn and remember language used to filter down a table of data within a simple string. Easy to implement, easy to write, but also easy to specify and detail.
+A simple easy to learn and remember language used to filter down a table of data within a simple query string. Easy to implement, easy to write, but also easy to specify and detail.
 
 [![fitl gif example](/PublicSite/src/lib/images/example.gif)](https://fitl.benbarcaskey.com)
 
