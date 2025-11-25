@@ -120,6 +120,12 @@ fn parse_op(
                     return Err(CompileError::InvalidToken(format!("Column {column} is a boolean column, {value_string} must be either \"true\" or \"false\"")));
                 }
             },
+            ColumnType::Array(_) => {
+                // For array columns, treat the value as a string to search within the array
+                // You might want to parse this differently depending on your use case
+                // For now, treating it as a single string value to search for
+                ColumnType::String(Some(value_string))
+            }
         };
 
         let remaining_tokens = temp_tokens.split_off(2 + compare_op_index);
@@ -136,7 +142,6 @@ fn parse_op(
         Err(CompileError::NotEnoughTokens(temp_tokens))
     }
 }
-
 fn parse_par(
     temp_tokens: TokenStack,
     columns: &Vec<String>,

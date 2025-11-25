@@ -1,3 +1,4 @@
+#[macro_use]
 mod utils;
 
 use std::collections::HashMap;
@@ -199,6 +200,7 @@ pub fn fitl_filter_custom(
                 table.set_column_type(&column, ColumnType::Bool(Option::from(false)))
             }
             ColumnType::String(_) => Ok(&table),
+            ColumnType::Array(_) => Ok(&table),
         };
 
         if column_converted_result.is_err() {

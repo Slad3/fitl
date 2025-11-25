@@ -17,6 +17,12 @@ const exampleTable = [
     { name: "bread", category: "carb", color: "brown", amount: 3.34 },
 ]
 
+const exampleTable2 = [
+    { name: "apple", tags: ["something", "asdf"] },
+    { name: "banana", tags: ["high", "words"] },
+    { name: "word", tags: ["low", "big"] }
+]
+
 describe('fitlFilter tests no options', () => {
     it('simple success', async () => {
         const queryInput = "name =: apple & color = red"
@@ -58,4 +64,16 @@ describe('fitlFilter tests no options', () => {
 
         }
     });
+
+    it('simple success with araray values', async () => {
+        const queryInput = ""
+        let result = await fitlFilter(queryInput, exampleTable2)
+
+        expect(result).toEqual([
+            { name: 'apple', tags: ['something', 'asdf'] },
+            { name: 'banana', tags: ['high', 'words'] },
+            { name: 'word', tags: ['low', 'big'] }
+        ])
+    });
+
 });

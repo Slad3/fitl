@@ -1,5 +1,5 @@
 use crate::data_structures::{ColumnParsingError, TableFormat, TableParsingError};
-use crate::value_parsers::{parse_string_to_bool, parse_string_to_number};
+use crate::value_parsers::{parse_string_to_bool, parse_string_to_number, ParsingError};
 use serde_json::{Map, Value};
 use std::cmp::PartialEq;
 use std::collections::HashMap;
@@ -12,6 +12,7 @@ pub enum ColumnType {
     String(Option<String>),
     Number(Option<f32>),
     Bool(Option<bool>),
+    Array(Option<Vec<String>>),
 }
 
 impl ColumnType {
@@ -24,6 +25,10 @@ impl ColumnType {
             },
             ColumnType::Bool(val) => match val.clone() {
                 Some(n) => n.to_string(),
+                None => "null".to_string(),
+            },
+            ColumnType::Array(val) => match val.clone() {
+                Some(n) => format!("{:?}", n),
                 None => "null".to_string(),
             },
         }
@@ -41,6 +46,10 @@ impl ColumnType {
             },
             ColumnType::Bool(val) => match val.clone() {
                 Some(n) => Some(n.to_string()),
+                None => None,
+            },
+            ColumnType::Array(val) => match val.clone() {
+                Some(n) => Some(format!("{:?}", n)),
                 None => None,
             },
         }
@@ -74,7 +83,12 @@ impl Table {
                     Value::Null => ColumnType::String(None),
                     Value::String(val) => ColumnType::String(Some(val.to_string())),
                     Value::Number(val) => ColumnType::String(Some(val.to_string())),
-                    Value::Array(val) => ColumnType::String(Some(format!("{:?}", val))),
+                    Value::Array(_) => {
+                        // Parse array properly - this should always succeed for valid arrays
+                        Self::parse_array(value, key)
+                            .map(|parsed_array| ColumnType::Array(Some(parsed_array)))
+                            .unwrap_or_else(|_| ColumnType::Array(None))
+                    }
                     Value::Object(val) => ColumnType::String(Some(format!("{:?}", val))),
                     Value::Bool(val) => ColumnType::String(Some(val.to_string())),
                 };
@@ -90,6 +104,32 @@ impl Table {
         })
     }
 
+    fn parse_array(
+        input_value: &Value,
+        column_name: &String,
+    ) -> Result<Vec<String>, TableParsingError> {
+        match input_value {
+            Value::Array(array) => array
+                .iter()
+                .map(|v| match v {
+                    Value::String(s) => Ok(s.clone()),
+                    Value::Number(n) => Ok(n.to_string()),
+                    Value::Bool(b) => Ok(b.to_string()),
+                    Value::Null => Ok("null".to_string()),
+                    _ => Err(TableParsingError::ParseError(ParsingError::CouldNotParse(
+                        format!("Could not parse value in array for column {}", column_name),
+                    ))),
+                })
+                .collect::<Result<Vec<String>, TableParsingError>>(),
+            _ => Err(TableParsingError::ParseError(ParsingError::CouldNotParse(
+                format!(
+                    "Expected array for column {}, got {:?}",
+                    column_name, input_value
+                ),
+            ))),
+        }
+    }
+
     pub fn to_json_array(&self) -> Value {
         let mut result: Vec<Value> = Vec::new();
 
@@ -99,13 +139,20 @@ impl Table {
                 match value {
                     ColumnType::String(None)
                     | ColumnType::Number(None)
-                    | ColumnType::Bool(None) => json_map.insert(key.to_string(), Value::Null),
+                    | ColumnType::Bool(None)
+                    | ColumnType::Array(None) => json_map.insert(key.to_string(), Value::Null),
                     ColumnType::String(Some(val)) => json_map.insert(key, Value::String(val)),
                     ColumnType::Number(Some(val)) => json_map.insert(
                         key,
                         Value::Number(serde_json::Number::from_f64(val as f64).unwrap()),
                     ),
                     ColumnType::Bool(Some(val)) => json_map.insert(key, Value::Bool(val)),
+                    ColumnType::Array(Some(val)) => {
+                        // Convert Vec<String> to Value::Array
+                        let array_values: Vec<Value> =
+                            val.iter().map(|s| Value::String(s.clone())).collect();
+                        json_map.insert(key, Value::Array(array_values))
+                    }
                 };
             }
             result.push(Value::Object(json_map));
@@ -200,6 +247,11 @@ impl Table {
                         },
                         None => None,
                     })),
+                    ColumnType::Array(_) => {
+                        // Arrays are typically not converted from strings in set_column_type
+                        // but we need to handle this case
+                        new_column.push(ColumnType::Array(column_value.clone().map(|s| vec![s])))
+                    }
                 }
             }
         }
@@ -376,5 +428,27 @@ mod tests {
         }
 
         println!("{:?}", table.to_json_array());
+    }
+
+    #[test]
+    fn test_array_column_type() {
+        let test_data = json!([
+            {"name": "item1", "tags": ["tag1", "tag2", "tag3"]},
+            {"name": "item2", "tags": ["tag4", "tag5"]},
+        ])
+        .as_array()
+        .unwrap()
+        .clone();
+
+        let table: Table = Table::from_json_array(&test_data).unwrap();
+
+        for row in &table {
+            if let Some(ColumnType::Array(Some(tags))) = row.get("tags") {
+                println!("Tags: {:?}", tags);
+            }
+        }
+
+        let json_output = table.to_json_array();
+        println!("{:?}", json_output);
     }
 }
